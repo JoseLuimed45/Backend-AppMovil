@@ -12,9 +12,9 @@ El sistema utiliza una arquitectura desacoplada optimizada para la nube:
 
 ```mermaid
 graph TD
-    Android[📱 Android App (Kotlin)] -->|Retrofit + SafeApiCall| API[☁️ Vercel Serverless Functions]
-    API -->|Mongoose| DB[(🍃 MongoDB Atlas)]
-    API -->|SDK| CDN[☁️ Cloudinary]
+    Android["📱 Android App (Kotlin)"] -->|Retrofit + SafeApiCall| API["☁️ Vercel Serverless Functions"]
+    API -->|Mongoose| DB[("🍃 MongoDB Atlas")]
+    API -->|SDK| CDN["☁️ Cloudinary"]
     Android -->|Glide| CDN
 ```
 
