@@ -44,19 +44,24 @@ fun LoginScreen(
     var showPassword by remember { mutableStateOf(false) }
 
     // Navegar a Home cuando login exitoso
+    // Navegar a Home cuando login exitoso
     LaunchedEffect(estado.success) {
         if (estado.success) {
+            // Limpiar estado antes de navegar para evitar bucles
+            viewModel.clearLoginResult()
+            
             if (estado.isAdmin) {
                 navController.navigate("posts_screen") {
-                    popUpTo(Screen.StartScreen.route) { inclusive = true }
+                    // Clear the entire backstack so user cannot go back to login
+                    popUpTo(0) { inclusive = true }
                 }
             } else {
                 usuarioViewModel.cargarPerfil()
                 navController.navigate(Screen.Home.route) {
-                    popUpTo(Screen.StartScreen.route) { inclusive = true }
+                    // Clear the entire backstack so user cannot go back to login
+                    popUpTo(0) { inclusive = true }
                 }
             }
-            viewModel.clearLoginResult()
         }
     }
 

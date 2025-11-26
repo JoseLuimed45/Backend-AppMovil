@@ -4,28 +4,38 @@ import retrofit2.Response
 import java.io.IOException
 
 abstract class SafeApiCall {
-    suspend fun <T> safeApiCall(call: suspend () -> Response<T>): Result<T> {
+    suspend fun <T> safeApiCall(call: suspend () -> Response<T>): NetworkResult<T> {
         return try {
             val response = call()
             if (response.isSuccessful) {
                 val body = response.body()
                 if (body != null) {
-                    Result.success(body)
+                    NetworkResult.Success(body)
                 } else {
-                    Result.failure(IOException("Response body is null"))
+                    NetworkResult.Error("Response body is null")
                 }
             } else {
                 val errorBody = response.errorBody()?.string()
                 val errorMessage = if (errorBody.isNullOrEmpty()) {
                     "Error code: ${response.code()}"
                 } else {
-                    // Try to parse JSON error if possible, otherwise return raw string (could be HTML from Vercel)
-                    errorBody
+                    // Check if error body is HTML (Vercel error)
+                    if (errorBody.trim().startsWith("<!DOCTYPE html>") || errorBody.trim().startsWith("<html")) {
+                        "Error técnico del servidor (Posible 502/504)."
+                    } else {
+                        errorBody
+                    }
                 }
-                Result.failure(IOException(errorMessage))
+                NetworkResult.Error(errorMessage)
             }
         } catch (e: Exception) {
-            Result.failure(e)
+            val errorMessage = when (e) {
+                is java.net.SocketTimeoutException -> "El servidor está despertando, intenta de nuevo."
+                is com.google.gson.stream.MalformedJsonException -> "Error técnico del servidor (Posible 502/504)."
+                is retrofit2.HttpException -> e.message() ?: "HttpException"
+                else -> e.message ?: "Unknown Error"
+            }
+            NetworkResult.Error(errorMessage)
         }
     }
 }

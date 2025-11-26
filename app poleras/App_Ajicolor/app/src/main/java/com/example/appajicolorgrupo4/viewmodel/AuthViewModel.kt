@@ -94,7 +94,6 @@ class AuthViewModel(
                     id = 9999,
                     nombre = "Administrador",
                     correo = "admin@ajicolor.cl",
-                    clave = "ajicolor",
                     telefono = "000000000",
                     direccion = "Oficina Central"
                 )
@@ -104,18 +103,20 @@ class AuthViewModel(
                 return@launch
             }
 
-            val result = repository.login(s.correo.trim(), s.clave)
-
-            _login.update {
-                if (result.isSuccess) {
+            when (val result = repository.login(s.correo.trim(), s.clave)) {
+                is com.example.appajicolorgrupo4.data.remote.NetworkResult.Success -> {
                     // Guardar la sesión del usuario
-                    result.getOrNull()?.let { user ->
+                    result.data?.let { user ->
                         sessionManager.saveSession(user)
                     }
-                    it.copy(isSubmitting = false, success = true, isAdmin = false, errorMsg = null)
-                } else {
-                    it.copy(isSubmitting = false, success = false, isAdmin = false,
-                        errorMsg = result.exceptionOrNull()?.message ?: "Error de autenticación")
+                    _login.update { it.copy(isSubmitting = false, success = true, isAdmin = false, errorMsg = null) }
+                }
+                is com.example.appajicolorgrupo4.data.remote.NetworkResult.Error -> {
+                    _login.update { it.copy(isSubmitting = false, success = false, isAdmin = false,
+                        errorMsg = result.message ?: "Error de autenticación") }
+                }
+                is com.example.appajicolorgrupo4.data.remote.NetworkResult.Loading -> {
+                    _login.update { it.copy(isSubmitting = true) }
                 }
             }
         }
@@ -181,20 +182,22 @@ class AuthViewModel(
             _register.update { it.copy(isSubmitting = true, errorMsg = null, success = false) }
             delay(700)
 
-            val result = repository.register(
+            when (val result = repository.register(
                 nombre = s.nombre.trim(),
                 correo = s.correo.trim(),
                 telefono = s.telefono.trim(),
                 clave = s.clave,
                 direccion = s.direccion.trim()
-            )
-
-            _register.update {
-                if (result.isSuccess) {
-                    it.copy(isSubmitting = false, success = true, errorMsg = null)
-                } else {
-                    it.copy(isSubmitting = false, success = false,
-                        errorMsg = result.exceptionOrNull()?.message ?: "No se pudo registrar")
+            )) {
+                is com.example.appajicolorgrupo4.data.remote.NetworkResult.Success -> {
+                    _register.update { it.copy(isSubmitting = false, success = true, errorMsg = null) }
+                }
+                is com.example.appajicolorgrupo4.data.remote.NetworkResult.Error -> {
+                    _register.update { it.copy(isSubmitting = false, success = false,
+                        errorMsg = result.message ?: "No se pudo registrar") }
+                }
+                is com.example.appajicolorgrupo4.data.remote.NetworkResult.Loading -> {
+                    _register.update { it.copy(isSubmitting = true) }
                 }
             }
         }
@@ -223,12 +226,16 @@ class AuthViewModel(
         viewModelScope.launch {
             _recoverState.update { it.copy(isLoading = true, error = null, success = false) }
             delay(500)
-            val result = repository.recoverPassword(s.email.trim())
-            _recoverState.update {
-                if (result.isSuccess) {
-                    it.copy(isLoading = false, success = true, error = null)
-                } else {
-                    it.copy(isLoading = false, success = false, error = result.exceptionOrNull()?.message)
+            
+            when (val result = repository.recoverPassword(s.email.trim())) {
+                is com.example.appajicolorgrupo4.data.remote.NetworkResult.Success -> {
+                    _recoverState.update { it.copy(isLoading = false, success = true, error = null) }
+                }
+                is com.example.appajicolorgrupo4.data.remote.NetworkResult.Error -> {
+                    _recoverState.update { it.copy(isLoading = false, success = false, error = result.message) }
+                }
+                is com.example.appajicolorgrupo4.data.remote.NetworkResult.Loading -> {
+                    _recoverState.update { it.copy(isLoading = true) }
                 }
             }
         }
@@ -266,14 +273,15 @@ class AuthViewModel(
             // Assuming the user stays in the flow, we can use recoverState.email
             val email = _recoverState.value.email
             
-            val result = repository.resetPassword(email, s.code.trim(), s.newPassword)
-            
-            _resetState.update {
-                if (result.isSuccess) {
-                    // Update session if token returned? For now just success.
-                    it.copy(isLoading = false, success = true, error = null)
-                } else {
-                    it.copy(isLoading = false, success = false, error = result.exceptionOrNull()?.message)
+            when (val result = repository.resetPassword(email, s.code.trim(), s.newPassword)) {
+                is com.example.appajicolorgrupo4.data.remote.NetworkResult.Success -> {
+                    _resetState.update { it.copy(isLoading = false, success = true, error = null) }
+                }
+                is com.example.appajicolorgrupo4.data.remote.NetworkResult.Error -> {
+                    _resetState.update { it.copy(isLoading = false, success = false, error = result.message) }
+                }
+                is com.example.appajicolorgrupo4.data.remote.NetworkResult.Loading -> {
+                    _resetState.update { it.copy(isLoading = true) }
                 }
             }
         }

@@ -10,6 +10,10 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
+import retrofit2.http.Multipart
+import retrofit2.http.Part
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 
 /**
  * Interfaz que define las operaciones de la API utilizando Retrofit.
@@ -63,9 +67,23 @@ interface ApiService {
      * GET /api/v1/productos/{id}
      */
     @GET("api/v1/productos/{id}")
-suspend fun getProductoById(@Path("id") id: String): Response<Product>
+    @GET("api/v1/productos/{id}")
+    suspend fun getProductoById(@Path("id") id: String): Response<Product>
 
-    
+    /**
+     * Crea un nuevo producto con imagen (Admin)
+     * POST /api/v1/productos
+     */
+    @Multipart
+    @POST("api/v1/productos")
+    suspend fun createProduct(
+        @Part("nombre") nombre: RequestBody,
+        @Part("descripcion") descripcion: RequestBody,
+        @Part("precio") precio: RequestBody,
+        @Part("categoria") categoria: RequestBody,
+        @Part("stock") stock: RequestBody,
+        @Part image: MultipartBody.Part?
+    ): Response<Product>
     // ==================== POSTS (Para admin) ====================
     
     /**
