@@ -9,6 +9,7 @@ import com.example.appajicolorgrupo4.data.repository.UserRepository
 import com.example.appajicolorgrupo4.data.session.SessionManager
 import com.example.appajicolorgrupo4.data.local.user.UserEntity
 import com.example.appajicolorgrupo4.data.repository.PedidoRepository
+import com.example.appajicolorgrupo4.data.remote.NetworkResult
 import com.example.appajicolorgrupo4.ui.state.UsuarioUiState
 import com.example.appajicolorgrupo4.ui.state.UsuarioErrores
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -89,23 +90,29 @@ class UsuarioViewModel(application: Application) : AndroidViewModel(application)
                 nombre = estadoActual.nombre,
                 correo = estadoActual.correo,
                 telefono = estadoActual.telefono,
-                clave = estadoActual.clave,
+                clave = "", // La clave ya no se gestiona localmente
                 direccion = estadoActual.direccion
             )
 
-            resultado.onSuccess { userId ->
-                _registroResultado.value = "Usuario registrado exitosamente"
-                _estado.update { UsuarioUiState() } // Limpiar formulario
-                onSuccess()
-            }.onFailure { error ->
-                _registroResultado.value = error.message ?: "Error al registrar"
-                _estado.update {
-                    it.copy(
-                        errores = it.errores.copy(
-                            correo = if (error.message?.contains("ya está registrado") == true)
-                                error.message else null
+            when (resultado) {
+                is NetworkResult.Success -> {
+                    _registroResultado.value = "Usuario registrado exitosamente"
+                    _estado.update { UsuarioUiState() } // Limpiar formulario
+                    onSuccess()
+                }
+                is NetworkResult.Error -> {
+                    _registroResultado.value = resultado.message ?: "Error al registrar"
+                    _estado.update {
+                        it.copy(
+                            errores = it.errores.copy(
+                                correo = if (resultado.message?.contains("ya está registrado") == true)
+                                    resultado.message else null
+                            )
                         )
-                    )
+                    }
+                }
+                is NetworkResult.Loading -> {
+                    // No action needed
                 }
             }
         }
@@ -153,7 +160,6 @@ class UsuarioViewModel(application: Application) : AndroidViewModel(application)
             return
         }
 
-        val currentUserId = _currentUser.value?.id
         val currentUserId = _currentUser.value?.id
 
         if (currentUserId == null) {

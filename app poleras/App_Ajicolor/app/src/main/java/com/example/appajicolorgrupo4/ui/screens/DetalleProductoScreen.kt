@@ -26,6 +26,9 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
+import androidx.compose.ui.platform.LocalContext
 import com.example.appajicolorgrupo4.data.*
 import com.example.appajicolorgrupo4.navigation.Screen
 import com.example.appajicolorgrupo4.ui.components.*
@@ -57,8 +60,12 @@ fun DetalleProductoScreen(
     if (producto == null) {
         Box(modifier = Modifier.fillMaxSize()) {
             // Fondo
-            Image(
-                painter = painterResource(id = com.example.appajicolorgrupo4.R.drawable.fondo_app),
+            AsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(com.example.appajicolorgrupo4.R.drawable.fondo_app)
+                    .size(1200)
+                    .crossfade(true)
+                    .build(),
                 contentDescription = "Fondo",
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop
@@ -183,8 +190,12 @@ fun DetalleProductoScreen(
     // Estructura sin anidamientos problemáticos
     Box(modifier = Modifier.fillMaxSize()) {
         // Fondo
-        Image(
-            painter = painterResource(id = com.example.appajicolorgrupo4.R.drawable.fondo_app),
+        AsyncImage(
+            model = ImageRequest.Builder(LocalContext.current)
+                .data(com.example.appajicolorgrupo4.R.drawable.fondo_app)
+                .size(1200)
+                .crossfade(true)
+                .build(),
             contentDescription = "Fondo",
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop
@@ -252,11 +263,16 @@ fun DetalleProductoScreen(
                             containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.75f)
                         )
                     ) {
-                        Image(
-                            painter = painterResource(id = producto.imagenResId),
+                        AsyncImage(
+                            model = ImageRequest.Builder(LocalContext.current)
+                                .data(producto.imagenResId)
+                                .size(800) // Limita el tamaño máximo a 800px
+                                .crossfade(true)
+                                .build(),
                             contentDescription = producto.nombre,
                             modifier = Modifier.fillMaxSize(),
-                            contentScale = ContentScale.Fit
+                            contentScale = ContentScale.Fit,
+                            error = painterResource(id = com.example.appajicolorgrupo4.R.drawable.logo_principal)
                         )
                     }
                 }

@@ -25,7 +25,7 @@ class UserRepositoryTest {
         // Given
         val email = "test@test.com"
         val password = "password"
-        val user = UserEntity(1, "Test User", email, "123456789", password, "Address")
+        val user = UserEntity(1, "Test User", email, "123456789", "Address")
         coEvery { userDao.getUserByEmail(email) } returns user
 
         // When
@@ -41,7 +41,7 @@ class UserRepositoryTest {
         // Given
         val email = "test@test.com"
         val password = "wrongpassword"
-        val user = UserEntity(1, "Test User", email, "123456789", "password", "Address")
+        val user = UserEntity(1, "Test User", email, "123456789", "Address")
         coEvery { userDao.getUserByEmail(email) } returns user
 
         // When
@@ -96,7 +96,7 @@ class UserRepositoryTest {
         val telefono = "123456789"
         val clave = "password"
         val direccion = "Address"
-        val existingUser = UserEntity(1, "Existing", correo, telefono, clave, direccion)
+        val existingUser = UserEntity(1, "Existing", correo, telefono, direccion)
         
         coEvery { userDao.getUserByEmail(correo) } returns existingUser
 
