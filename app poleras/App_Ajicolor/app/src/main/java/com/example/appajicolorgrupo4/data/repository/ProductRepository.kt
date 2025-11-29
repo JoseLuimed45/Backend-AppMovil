@@ -8,9 +8,8 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
-import javax.inject.Inject
 
-class ProductRepository @Inject constructor(
+class ProductRepository(
     private val apiService: ApiService
 ) : SafeApiCall() {
 

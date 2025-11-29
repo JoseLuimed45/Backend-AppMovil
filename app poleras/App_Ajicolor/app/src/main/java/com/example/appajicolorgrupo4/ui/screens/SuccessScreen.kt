@@ -6,6 +6,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -72,6 +73,7 @@ fun SuccessScreen(
             Image(
                 painter = painterResource(id = R.drawable.compra_exitosa),
                 contentDescription = "Compra Exitosa",
+                contentScale = ContentScale.Fit,
                 modifier = Modifier.size(180.dp)
             )
             Spacer(modifier = Modifier.height(24.dp))

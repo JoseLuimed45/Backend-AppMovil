@@ -53,7 +53,7 @@ class SessionManager(context: Context) {
         val direccion = prefs.getString(KEY_USER_ADDRESS, "") ?: ""
 
         return if (id > 0) {
-            UserEntity(id = id, nombre = nombre, correo = correo, telefono = telefono, clave = "", direccion = direccion)
+            UserEntity(id = id, nombre = nombre, correo = correo, telefono = telefono, direccion = direccion)
         } else null
     }
 

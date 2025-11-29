@@ -8,6 +8,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -44,6 +45,7 @@ fun StartScreen(
             Image(
                 painter = painterResource(id = R.drawable.logo_principal),
                 contentDescription = "Logo Aji Color",
+                contentScale = ContentScale.Fit,
                 modifier = Modifier
                     .size(400.dp)
                     .graphicsLayer(clip = true)

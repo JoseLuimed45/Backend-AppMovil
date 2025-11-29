@@ -6,14 +6,6 @@ import androidx.room.PrimaryKey
 // @Entity declara una tabla SQLite manejada por Room.
 // tableName = "users" define el nombre exacto de la tabla.
 @Entity(tableName = "users")
-package com.example.appajicolorgrupo4.data.local.user
-
-import androidx.room.Entity
-import androidx.room.PrimaryKey
-
-// @Entity declara una tabla SQLite manejada por Room.
-// tableName = "users" define el nombre exacto de la tabla.
-@Entity(tableName = "users")
 data class UserEntity(
     @PrimaryKey(autoGenerate = true)    // Clave primaria autoincremental
     val id: Long = 0L,

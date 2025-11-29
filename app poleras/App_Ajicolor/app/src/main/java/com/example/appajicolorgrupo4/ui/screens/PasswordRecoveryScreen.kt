@@ -11,6 +11,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -82,6 +83,7 @@ fun PasswordRecoveryScreen(
                 Image(
                     painter = painterResource(id = R.drawable.recovery),
                     contentDescription = "Recuperar Contraseña",
+                    contentScale = ContentScale.Fit,
                     modifier = Modifier.size(150.dp)
                 )
 
@@ -153,6 +155,7 @@ fun PasswordRecoveryScreen(
                 Image(
                     painter = painterResource(id = R.drawable.envio_correo),
                     contentDescription = "Reset Password",
+                    contentScale = ContentScale.Fit,
                     modifier = Modifier.size(120.dp)
                 )
 

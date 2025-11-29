@@ -7,6 +7,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -42,6 +43,7 @@ fun InitScreen(
             Image(
                 painter = painterResource(id = R.drawable.inicio_sesion),
                 contentDescription = "Inicio Sesión",
+                contentScale = ContentScale.Fit,
                 modifier = Modifier
                     .fillMaxWidth(0.85f)
                     .height(100.dp)
@@ -56,6 +58,7 @@ fun InitScreen(
             Image(
                 painter = painterResource(id = R.drawable.crear_cuenta),
                 contentDescription = "Crear Cuenta",
+                contentScale = ContentScale.Fit,
                 modifier = Modifier
                     .fillMaxWidth(0.85f)
                     .height(100.dp)

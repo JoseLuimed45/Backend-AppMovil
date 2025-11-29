@@ -67,7 +67,6 @@ interface ApiService {
      * GET /api/v1/productos/{id}
      */
     @GET("api/v1/productos/{id}")
-    @GET("api/v1/productos/{id}")
     suspend fun getProductoById(@Path("id") id: String): Response<Product>
 
     /**
