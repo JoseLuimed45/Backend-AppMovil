@@ -32,6 +32,8 @@ sealed class Screen(val route: String) {
     // Rutas de administración
     data object Posts : Screen(route = "posts_screen")
     data object AdminProductos : Screen(route = "admin_productos")
+    data object AdminPedidos : Screen(route = "admin_pedidos")
+    data object AdminUsuarios : Screen(route = "admin_usuarios")
 
     // Rutas con argumentos
     data class Success(val numeroPedido: String?) : Screen(route = "success/{numeroPedido}") {

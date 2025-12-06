@@ -163,9 +163,9 @@ fun ProfileScreen(
                                 focusedTextColor = MoradoAji,
                                 unfocusedTextColor = MoradoAji,
                                 disabledTextColor = MoradoAji,
-                                focusedContainerColor = Color.White.copy(alpha = 0.75f),
-                                unfocusedContainerColor = Color.White.copy(alpha = 0.75f),
-                                disabledContainerColor = Color.White.copy(alpha = 0.75f)
+                                focusedContainerColor = Color.White,
+                                unfocusedContainerColor = Color.White,
+                                disabledContainerColor = Color.White
                             )
                         )
 
@@ -190,9 +190,9 @@ fun ProfileScreen(
                                 focusedTextColor = MoradoAji,
                                 unfocusedTextColor = MoradoAji,
                                 disabledTextColor = MoradoAji,
-                                focusedContainerColor = Color.White.copy(alpha = 0.75f),
-                                unfocusedContainerColor = Color.White.copy(alpha = 0.75f),
-                                disabledContainerColor = Color.White.copy(alpha = 0.75f)
+                                focusedContainerColor = Color.White,
+                                unfocusedContainerColor = Color.White,
+                                disabledContainerColor = Color.White
                             )
                         )
 
@@ -217,9 +217,9 @@ fun ProfileScreen(
                                 focusedTextColor = MoradoAji,
                                 unfocusedTextColor = MoradoAji,
                                 disabledTextColor = MoradoAji,
-                                focusedContainerColor = Color.White.copy(alpha = 0.75f),
-                                unfocusedContainerColor = Color.White.copy(alpha = 0.75f),
-                                disabledContainerColor = Color.White.copy(alpha = 0.75f)
+                                focusedContainerColor = Color.White,
+                                unfocusedContainerColor = Color.White,
+                                disabledContainerColor = Color.White
                             )
                         )
 
@@ -244,9 +244,9 @@ fun ProfileScreen(
                                 focusedTextColor = MoradoAji,
                                 unfocusedTextColor = MoradoAji,
                                 disabledTextColor = MoradoAji,
-                                focusedContainerColor = Color.White.copy(alpha = 0.75f),
-                                unfocusedContainerColor = Color.White.copy(alpha = 0.75f),
-                                disabledContainerColor = Color.White.copy(alpha = 0.75f)
+                                focusedContainerColor = Color.White,
+                                unfocusedContainerColor = Color.White,
+                                disabledContainerColor = Color.White
                             )
                         )
 

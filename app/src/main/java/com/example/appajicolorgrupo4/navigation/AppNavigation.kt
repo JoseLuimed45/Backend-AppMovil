@@ -119,7 +119,9 @@ composable(Screen.Catalogo.route) { CatalogoProductosScreen(navController) }
 
         // Admin
         composable(Screen.Posts.route) { PostScreen(postViewModel) }
-        composable(Screen.AdminProductos.route) {AdminProductosScreen(navController) }
+        composable(Screen.AdminProductos.route) { AdminProductosScreen(navController) }
+        composable(Screen.AdminPedidos.route) { AdminPedidosScreen(navController, pedidosViewModel) }
+        composable(Screen.AdminUsuarios.route) { AdminUsuariosScreen(navController, usuarioViewModel) }
 
 
         // Arguments

@@ -72,6 +72,7 @@ class AdminProductViewModel(
         stock: Int,
         imageFile: File? = null
     ) {
+        Log.d("AdminProductVM", "crearProducto llamado con: nombre='$nombre', desc='$descripcion', precio=$precio, cat='$categoria', stock=$stock")
         viewModelScope.launch {
             _isLoading.value = true
             _error.value = null

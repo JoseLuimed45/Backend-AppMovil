@@ -90,8 +90,8 @@ fun RegistroScreen(
                     cursorColor = AmarilloAji,
                     focusedTextColor = MoradoAji,
                     unfocusedTextColor = MoradoAji,
-                    focusedContainerColor = Color.White.copy(alpha = 0.75f),
-                    unfocusedContainerColor = Color.White.copy(alpha = 0.75f)
+                    focusedContainerColor = Color.White,
+                    unfocusedContainerColor = Color.White
                 )
             )
             Spacer(Modifier.height(8.dp))
@@ -115,8 +115,8 @@ fun RegistroScreen(
                     cursorColor = AmarilloAji,
                     focusedTextColor = MoradoAji,
                     unfocusedTextColor = MoradoAji,
-                    focusedContainerColor = Color.White.copy(alpha = 0.75f),
-                    unfocusedContainerColor = Color.White.copy(alpha = 0.75f)
+                    focusedContainerColor = Color.White,
+                    unfocusedContainerColor = Color.White
                 )
             )
             Spacer(Modifier.height(8.dp))
@@ -140,8 +140,8 @@ fun RegistroScreen(
                     cursorColor = AmarilloAji,
                     focusedTextColor = MoradoAji,
                     unfocusedTextColor = MoradoAji,
-                    focusedContainerColor = Color.White.copy(alpha = 0.75f),
-                    unfocusedContainerColor = Color.White.copy(alpha = 0.75f)
+                    focusedContainerColor = Color.White,
+                    unfocusedContainerColor = Color.White
                 )
             )
             Spacer(Modifier.height(8.dp))
@@ -173,8 +173,8 @@ fun RegistroScreen(
                     cursorColor = AmarilloAji,
                     focusedTextColor = MoradoAji,
                     unfocusedTextColor = MoradoAji,
-                    focusedContainerColor = Color.White.copy(alpha = 0.75f),
-                    unfocusedContainerColor = Color.White.copy(alpha = 0.75f)
+                    focusedContainerColor = Color.White,
+                    unfocusedContainerColor = Color.White
                 )
             )
             Spacer(Modifier.height(8.dp))
@@ -206,8 +206,8 @@ fun RegistroScreen(
                     cursorColor = AmarilloAji,
                     focusedTextColor = MoradoAji,
                     unfocusedTextColor = MoradoAji,
-                    focusedContainerColor = Color.White.copy(alpha = 0.75f),
-                    unfocusedContainerColor = Color.White.copy(alpha = 0.75f)
+                    focusedContainerColor = Color.White,
+                    unfocusedContainerColor = Color.White
                 )
             )
             Row(verticalAlignment = Alignment.CenterVertically) {

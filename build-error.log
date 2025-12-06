@@ -1,0 +1,24 @@
+Initialized native services in: C:\Users\josel\.gradle\native
+Initialized jansi services in: C:\Users\josel\.gradle\native
+Found daemon DaemonInfo{pid=4504, address=[bec8fcef-1f72-4cdf-9a25-d9e47e1f9257 port:55090, addresses:[/127.0.0.1]], state=Idle, lastBusy=1764915714428, context=DefaultDaemonContext[uid=3c3101ed-9fe9-42cf-87e6-f0af1376c82e,javaHome=C:\Program Files\Java\jdk-17,javaVersion=17,javaVendor=Oracle Corporation,daemonRegistryDir=C:\Users\josel\.gradle\daemon,pid=4504,idleTimeout=10800000,priority=NORMAL,applyInstrumentationAgent=true,nativeServicesMode=ENABLED,daemonOpts=-Xmx2048m,-Dfile.encoding=UTF-8,-Duser.country=CL,-Duser.language=es,-Duser.variant]} however its context does not match the desired criteria.
+JVM is incompatible.
+Wanted: DaemonRequestContext{jvmCriteria=C:\Users\josel\AppData\Roaming\Code\User\globalStorage\pleiades.java-extension-pack-jdk\java\latest (no JDK specified, using current Java home), daemonOpts=[-XX:+EnableDynamicAgentLoading, -Xmx2048m, -Dfile.encoding=UTF-8, -Duser.country=CL, -Duser.language=es, -Duser.variant], applyInstrumentationAgent=true, nativeServicesMode=ENABLED, priority=NORMAL}
+Actual: DefaultDaemonContext[uid=3c3101ed-9fe9-42cf-87e6-f0af1376c82e,javaHome=C:\Program Files\Java\jdk-17,javaVersion=17,javaVendor=Oracle Corporation,daemonRegistryDir=C:\Users\josel\.gradle\daemon,pid=4504,idleTimeout=10800000,priority=NORMAL,applyInstrumentationAgent=true,nativeServicesMode=ENABLED,daemonOpts=-Xmx2048m,-Dfile.encoding=UTF-8,-Duser.country=CL,-Duser.language=es,-Duser.variant]
+
+  Looking for a different daemon...
+Found daemon DaemonInfo{pid=21160, address=[3908e98e-139c-440f-a9a7-b9bc5aab004f port:55134, addresses:[/127.0.0.1]], state=Idle, lastBusy=1764915718628, context=DefaultDaemonContext[uid=e10d32bd-0441-4182-bd63-b7e0991655d6,javaHome=C:\Program Files\Java\jdk-17,javaVersion=17,javaVendor=Oracle Corporation,daemonRegistryDir=C:\Users\josel\.gradle\daemon,pid=21160,idleTimeout=10800000,priority=NORMAL,applyInstrumentationAgent=true,nativeServicesMode=ENABLED,daemonOpts=-XX:+EnableDynamicAgentLoading,-Xmx2048m,-Dfile.encoding=UTF-8,-Duser.country=CL,-Duser.language=es,-Duser.variant]} however its context does not match the desired criteria.
+JVM is incompatible.
+Wanted: DaemonRequestContext{jvmCriteria=C:\Users\josel\AppData\Roaming\Code\User\globalStorage\pleiades.java-extension-pack-jdk\java\latest (no JDK specified, using current Java home), daemonOpts=[-XX:+EnableDynamicAgentLoading, -Xmx2048m, -Dfile.encoding=UTF-8, -Duser.country=CL, -Duser.language=es, -Duser.variant], applyInstrumentationAgent=true, nativeServicesMode=ENABLED, priority=NORMAL}
+Actual: DefaultDaemonContext[uid=e10d32bd-0441-4182-bd63-b7e0991655d6,javaHome=C:\Program Files\Java\jdk-17,javaVersion=17,javaVendor=Oracle Corporation,daemonRegistryDir=C:\Users\josel\.gradle\daemon,pid=21160,idleTimeout=10800000,priority=NORMAL,applyInstrumentationAgent=true,nativeServicesMode=ENABLED,daemonOpts=-XX:+EnableDynamicAgentLoading,-Xmx2048m,-Dfile.encoding=UTF-8,-Duser.country=CL,-Duser.language=es,-Duser.variant]
+
+  Looking for a different daemon...
+The client will now receive all logging from the daemon (pid: 38420). The daemon log file: C:\Users\josel\.gradle\daemon\8.13\daemon-38420.out.log
+Starting 3rd build in daemon [uptime: 1 mins 3.982 secs, performance: 100%, GC rate: 0.00/s, heap usage: 0% of 2 GiB]
+Using 8 worker leases.
+Now considering [C:\Users\josel\AndroidStudioProjects\app_ajicolor_backend_node\app poleras\App_Ajicolor] as hierarchies to watch
+Watching the file system is configured to be enabled if available
+File system watching is active
+Starting Build
+Caching disabled for Kotlin DSL script compilation (Settings/TopLevel/stage1) because:
+  Build cache is disabled
+Watched directory hierarchies: []

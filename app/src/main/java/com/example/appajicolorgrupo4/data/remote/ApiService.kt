@@ -70,6 +70,15 @@ interface ApiService {
     suspend fun getProductoById(@Path("id") id: String): Response<Product>
 
     /**
+     * Crea un nuevo producto con JSON (Admin - sin imagen)
+     * POST /api/v1/productos
+     */
+    @POST("api/v1/productos")
+    suspend fun createProductJson(
+        @Body product: CreateProductRequest
+    ): Response<Product>
+
+    /**
      * Crea un nuevo producto con imagen (Admin)
      * POST /api/v1/productos
      */
@@ -82,6 +91,16 @@ interface ApiService {
         @Part("categoria") categoria: RequestBody,
         @Part("stock") stock: RequestBody,
         @Part image: MultipartBody.Part?
+    ): Response<Product>
+
+    /**
+     * Actualiza un producto existente con JSON (Admin - sin imagen)
+     * PUT /api/v1/productos/{id}
+     */
+    @retrofit2.http.PUT("api/v1/productos/{id}")
+    suspend fun updateProductJson(
+        @Path("id") id: String,
+        @Body product: UpdateProductRequest
     ): Response<Product>
 
     /**
@@ -174,4 +193,20 @@ data class ResetPasswordRequest(
 data class ResetResponse(
     val message: String,
     val token: String
+)
+
+data class CreateProductRequest(
+    val nombre: String,
+    val descripcion: String,
+    val precio: Int,
+    val categoria: String,
+    val stock: Int
+)
+
+data class UpdateProductRequest(
+    val nombre: String,
+    val descripcion: String,
+    val precio: Int,
+    val categoria: String,
+    val stock: Int
 )

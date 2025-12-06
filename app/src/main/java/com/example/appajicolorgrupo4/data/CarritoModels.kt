@@ -1,5 +1,8 @@
 package com.example.appajicolorgrupo4.data
 
+import java.text.NumberFormat
+import java.util.Locale
+
 /**
  * Representa un producto en el carrito de compras
  */
@@ -22,13 +25,20 @@ val imagenResId: Int?
     /**
      * Formatea el subtotal con símbolo $
      */
-    fun subtotalFormateado(): String = "$${ subtotal() }"
+    fun subtotalFormateado(): String = "$${formatChileno(subtotal())}"
 
     /**
      * Formatea el precio con símbolo $
      */
-    fun precioFormateado(): String = "$$precio"
+    fun precioFormateado(): String = "$${formatChileno(precio)}"
 }
+
+private fun formatChileno(valor: Int): String =
+    try {
+        NumberFormat.getNumberInstance(Locale("es", "CL")).format(valor)
+    } catch (e: Exception) {
+        valor.toString()
+    }
 
 /**
  * Métodos de pago disponibles

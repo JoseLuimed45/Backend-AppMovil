@@ -16,11 +16,11 @@ console.log("--- Checking Admin User ---");
 db.users.find({ rol: 'ADMIN' });
 
 // 🔍 TEST 2: Check Product Catalog
-// Should return count of products and list first 5.
+// Should return count of products and list ALL products with full details.
 console.log("--- Checking Products ---");
 const productCount = db.products.countDocuments();
 console.log(`Total Products: ${productCount}`);
-db.products.find().limit(5);
+db.products.find().sort({ _id: -1 }); // Muestra todos, más recientes primero
 
 // 🔍 TEST 3: Check Orders
 // Should return count of orders.

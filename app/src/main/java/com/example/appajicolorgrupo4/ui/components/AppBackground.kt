@@ -26,9 +26,9 @@ fun AppBackground(
             .background(
                 brush = Brush.verticalGradient(
                     colors = listOf(
-                        MoradoAji,
-                        Color(0xFF6B4E9C), // Morado intermedio
-                        Color(0xFF9B7BBE)  // Morado claro
+                        Color(0xFF2d1440),  // MoradoAjiOscuro
+                        Color(0xFF3d2458),  // Morado intermedio suave
+                        Color(0xFF4f266a)   // MoradoAji
                     )
                 )
             )

@@ -1,5 +1,6 @@
 package com.example.appajicolorgrupo4.ui.screens
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -18,9 +19,11 @@ import androidx.navigation.NavController
 import com.example.appajicolorgrupo4.data.models.Product
 import com.example.appajicolorgrupo4.data.remote.RetrofitInstance
 import com.example.appajicolorgrupo4.data.repository.ProductRepository
+import com.example.appajicolorgrupo4.navigation.Screen
 import com.example.appajicolorgrupo4.ui.components.AppBackground
 import com.example.appajicolorgrupo4.ui.theme.AmarilloAji
 import com.example.appajicolorgrupo4.ui.theme.MoradoAji
+import com.example.appajicolorgrupo4.ui.theme.MoradoAjiOscuro
 import com.example.appajicolorgrupo4.viewmodel.AdminProductViewModel
 import com.example.appajicolorgrupo4.viewmodel.AdminProductViewModelFactory
 
@@ -68,6 +71,12 @@ fun AdminProductosScreen(navController: NavController) {
                         }
                     },
                     actions = {
+                        IconButton(onClick = { navController.navigate(Screen.AdminPedidos.route) }) {
+                            Icon(Icons.Default.ShoppingCart, "Ver Pedidos", tint = AmarilloAji)
+                        }
+                        IconButton(onClick = { navController.navigate(Screen.AdminUsuarios.route) }) {
+                            Icon(Icons.Default.Person, "Ver Usuarios", tint = AmarilloAji)
+                        }
                         IconButton(onClick = { viewModel.cargarProductos() }) {
                             Icon(Icons.Default.Refresh, "Recargar", tint = AmarilloAji)
                         }
@@ -80,7 +89,10 @@ fun AdminProductosScreen(navController: NavController) {
             },
             floatingActionButton = {
                 FloatingActionButton(
-                    onClick = { showAddDialog = true },
+                    onClick = { 
+                        Log.d("AdminProductos", "FAB clicked - opening add dialog")
+                        showAddDialog = true 
+                    },
                     containerColor = AmarilloAji,
                     contentColor = MoradoAji
                 ) {
@@ -122,8 +134,16 @@ fun AdminProductosScreen(navController: NavController) {
                             items(productos) { producto ->
                                 ProductoAdminCard(
                                     producto = producto,
-                                    onEdit = { selectedProduct = producto; showEditDialog = true },
-                                    onDelete = { selectedProduct = producto; showDeleteDialog = true }
+                                    onEdit = { 
+                                        Log.d("AdminProductos", "Edit clicked for: ${producto.nombre}")
+                                        selectedProduct = producto
+                                        showEditDialog = true 
+                                    },
+                                    onDelete = { 
+                                        Log.d("AdminProductos", "Delete clicked for: ${producto.nombre}")
+                                        selectedProduct = producto
+                                        showDeleteDialog = true 
+                                    }
                                 )
                             }
                         }
@@ -134,10 +154,15 @@ fun AdminProductosScreen(navController: NavController) {
     }
 
     if (showAddDialog) {
+        Log.d("AdminProductos", "Showing Add Dialog")
         ProductoFormDialog(
             title = "Agregar Producto",
-            onDismiss = { showAddDialog = false },
+            onDismiss = { 
+                Log.d("AdminProductos", "Add Dialog dismissed")
+                showAddDialog = false 
+            },
             onConfirm = { nombre, descripcion, precio, categoria, stock ->
+                Log.d("AdminProductos", "Creating product: $nombre")
                 viewModel.crearProducto(nombre, descripcion, precio, categoria, stock)
                 showAddDialog = false
             }
@@ -157,19 +182,29 @@ fun AdminProductosScreen(navController: NavController) {
     }
 
     if (showDeleteDialog && selectedProduct != null) {
+        Log.d("AdminProductos", "Showing Delete Dialog for: ${selectedProduct?.nombre}")
         AlertDialog(
-            onDismissRequest = { showDeleteDialog = false; selectedProduct = null },
-            title = { Text("Confirmar Eliminación", color = MoradoAji) },
-            text = { Text("¿Eliminar '${selectedProduct?.nombre}'?", color = MoradoAji) },
+            onDismissRequest = { 
+                Log.d("AdminProductos", "Delete Dialog dismissed")
+                showDeleteDialog = false
+                selectedProduct = null 
+            },
+            title = { Text("Confirmar Eliminación", color = MoradoAjiOscuro) },
+            text = { Text("¿Eliminar '${selectedProduct?.nombre}'?", color = MoradoAjiOscuro) },
             confirmButton = {
                 Button(
-                    onClick = { selectedProduct?.let { viewModel.eliminarProducto(it.id) }; showDeleteDialog = false; selectedProduct = null },
+                    onClick = { 
+                        Log.d("AdminProductos", "Deleting product: ${selectedProduct?.id}")
+                        selectedProduct?.let { viewModel.eliminarProducto(it.id) }
+                        showDeleteDialog = false
+                        selectedProduct = null 
+                    },
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
                 ) { Text("Eliminar") }
             },
             dismissButton = {
                 TextButton(onClick = { showDeleteDialog = false; selectedProduct = null }) {
-                    Text("Cancelar", color = MoradoAji)
+                    Text("Cancelar", color = MoradoAjiOscuro)
                 }
             },
             containerColor = androidx.compose.ui.graphics.Color.White.copy(alpha = 0.95f)
@@ -206,7 +241,7 @@ private fun ProductoAdminCard(producto: Product, onEdit: () -> Unit, onDelete: (
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                 Column {
                     Text("Precio", style = MaterialTheme.typography.labelSmall, color = MoradoAji.copy(alpha = 0.6f))
-                    Text("$$${producto.precio}", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, color = MoradoAji)
+                    Text("$${producto.precio}", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, color = MoradoAji)
                 }
                 Column {
                     Text("Stock", style = MaterialTheme.typography.labelSmall, color = MoradoAji.copy(alpha = 0.6f))
@@ -240,41 +275,81 @@ private fun ProductoFormDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(title, color = MoradoAji, fontWeight = FontWeight.Bold) },
+        title = { Text(title, color = MoradoAjiOscuro, fontWeight = FontWeight.Bold) },
         text = {
             Column(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 OutlinedTextField(
-                    value = nombre, onValueChange = { nombre = it }, label = { Text("Nombre") },
+                    value = nombre, onValueChange = { nombre = it }, label = { Text("Nombre", color = MoradoAjiOscuro) },
                     modifier = Modifier.fillMaxWidth(), singleLine = true,
-                    colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = MoradoAji, unfocusedBorderColor = MoradoAji.copy(alpha = 0.5f))
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = MoradoAjiOscuro,
+                        unfocusedBorderColor = MoradoAjiOscuro.copy(alpha = 0.5f),
+                        focusedLabelColor = MoradoAjiOscuro,
+                        unfocusedLabelColor = MoradoAjiOscuro.copy(alpha = 0.8f),
+                        cursorColor = MoradoAjiOscuro,
+                        focusedTextColor = MoradoAjiOscuro,
+                        unfocusedTextColor = MoradoAjiOscuro
+                    )
                 )
                 OutlinedTextField(
-                    value = descripcion, onValueChange = { descripcion = it }, label = { Text("Descripción") },
+                    value = descripcion, onValueChange = { descripcion = it }, label = { Text("Descripción", color = MoradoAjiOscuro) },
                     modifier = Modifier.fillMaxWidth(), minLines = 3, maxLines = 5,
-                    colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = MoradoAji, unfocusedBorderColor = MoradoAji.copy(alpha = 0.5f))
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = MoradoAjiOscuro,
+                        unfocusedBorderColor = MoradoAjiOscuro.copy(alpha = 0.5f),
+                        focusedLabelColor = MoradoAjiOscuro,
+                        unfocusedLabelColor = MoradoAjiOscuro.copy(alpha = 0.8f),
+                        cursorColor = MoradoAjiOscuro,
+                        focusedTextColor = MoradoAjiOscuro,
+                        unfocusedTextColor = MoradoAjiOscuro
+                    )
                 )
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     OutlinedTextField(
                         value = precioText, onValueChange = { if (it.all { char -> char.isDigit() }) precioText = it },
-                        label = { Text("Precio") }, modifier = Modifier.weight(1f), singleLine = true, prefix = { Text("$") },
-                        colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = MoradoAji)
+                        label = { Text("Precio", color = MoradoAjiOscuro) }, modifier = Modifier.weight(1f), singleLine = true, prefix = { Text("$", color = MoradoAjiOscuro) },
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = MoradoAjiOscuro,
+                            unfocusedBorderColor = MoradoAjiOscuro.copy(alpha = 0.5f),
+                            focusedLabelColor = MoradoAjiOscuro,
+                            unfocusedLabelColor = MoradoAjiOscuro.copy(alpha = 0.8f),
+                            cursorColor = MoradoAjiOscuro,
+                            focusedTextColor = MoradoAjiOscuro,
+                            unfocusedTextColor = MoradoAjiOscuro
+                        )
                     )
                     OutlinedTextField(
                         value = stockText, onValueChange = { if (it.all { char -> char.isDigit() }) stockText = it },
-                        label = { Text("Stock") }, modifier = Modifier.weight(1f), singleLine = true,
-                        colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = MoradoAji)
+                        label = { Text("Stock", color = MoradoAjiOscuro) }, modifier = Modifier.weight(1f), singleLine = true,
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = MoradoAjiOscuro,
+                            unfocusedBorderColor = MoradoAjiOscuro.copy(alpha = 0.5f),
+                            focusedLabelColor = MoradoAjiOscuro,
+                            unfocusedLabelColor = MoradoAjiOscuro.copy(alpha = 0.8f),
+                            cursorColor = MoradoAjiOscuro,
+                            focusedTextColor = MoradoAjiOscuro,
+                            unfocusedTextColor = MoradoAjiOscuro
+                        )
                     )
                 }
                 ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = !expanded }) {
                     OutlinedTextField(
-                        value = categoria, onValueChange = {}, readOnly = true, label = { Text("Categoría") },
+                        value = categoria, onValueChange = {}, readOnly = true, label = { Text("Categoría", color = MoradoAjiOscuro) },
                         trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
                         modifier = Modifier.fillMaxWidth().menuAnchor(),
-                        colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = MoradoAji)
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = MoradoAjiOscuro,
+                            unfocusedBorderColor = MoradoAjiOscuro.copy(alpha = 0.5f),
+                            focusedLabelColor = MoradoAjiOscuro,
+                            unfocusedLabelColor = MoradoAjiOscuro.copy(alpha = 0.8f),
+                            cursorColor = MoradoAjiOscuro,
+                            focusedTextColor = MoradoAjiOscuro,
+                            unfocusedTextColor = MoradoAjiOscuro
+                        )
                     )
                     ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
                         categorias.forEach { cat ->
-                            DropdownMenuItem(text = { Text(cat) }, onClick = { categoria = cat; expanded = false })
+                            DropdownMenuItem(text = { Text(cat, color = MoradoAjiOscuro) }, onClick = { categoria = cat; expanded = false }, colors = MenuDefaults.itemColors(textColor = MoradoAjiOscuro))
                         }
                     }
                 }
@@ -289,11 +364,11 @@ private fun ProductoFormDialog(
                         onConfirm(nombre, descripcion, precio, categoria, stock)
                     }
                 },
-                colors = ButtonDefaults.buttonColors(containerColor = AmarilloAji, contentColor = MoradoAji),
-                border = BorderStroke(2.dp, MoradoAji)
-            ) { Text(if (producto == null) "Crear" else "Actualizar", fontWeight = FontWeight.Bold) }
+                colors = ButtonDefaults.buttonColors(containerColor = AmarilloAji, contentColor = MoradoAjiOscuro),
+                border = BorderStroke(2.dp, MoradoAjiOscuro)
+            ) { Text(if (producto == null) "Crear" else "Actualizar", fontWeight = FontWeight.Bold, color = MoradoAjiOscuro) }
         },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancelar", color = MoradoAji) } },
+        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancelar", color = MoradoAjiOscuro) } },
         containerColor = androidx.compose.ui.graphics.Color.White.copy(alpha = 0.95f)
     )
 }

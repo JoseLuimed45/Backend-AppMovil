@@ -6,6 +6,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -40,6 +41,8 @@ fun PaymentMethodsScreen(
     notasAdicionales: String? = null
 ) {
     var metodoSeleccionado by remember { mutableStateOf<MetodoPago?>(null) }
+    var mostrarDialogoPago by remember { mutableStateOf(false) }
+    var procesandoPago by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
 
     val productos by carritoViewModel.productos.collectAsState()
@@ -157,52 +160,149 @@ fun PaymentMethodsScreen(
                 // Botón confirmar pago
                 Button(
                     onClick = {
-                        val user = currentUser
-                        if (metodoSeleccionado != null && user != null) {
-                            scope.launch {
-                                val numeroPedido = GeneradorNumeroPedido.generar(nombreUsuario)
-                                val pedido = PedidoCompleto(
-                                    numeroPedido = numeroPedido,
-                                    nombreUsuario = nombreUsuario,
-                                    productos = productos,
-                                    subtotal = subtotal.toDouble(),
-                                    impuestos = impuestos.toDouble(),
-                                    costoEnvio = costoEnvio.toDouble(),
-                                    total = total.toDouble(),
-                                    direccionEnvio = direccionDecodificada,
-                                    telefono = telefonoDecodificado,
-                                    notasAdicionales = notasDecodificadas,
-                                    metodoPago = metodoSeleccionado!!,
-                                    estado = EstadoPedido.CONFIRMADO,
-                                    fechaCreacion = System.currentTimeMillis(),
-                                    fechaConfirmacion = System.currentTimeMillis()
-                                )
-
-                                val resultado = pedidosViewModel.agregarPedido(pedido, user.id)
-                                resultado.onSuccess {
-                                    carritoViewModel.limpiarCarrito()
-                                    navController.navigate(Screen.Success.createRoute(numeroPedido)) {
-                                        popUpTo(Screen.Cart.route) { inclusive = true }
-                                    }
-                                }
-                            }
+                        if (metodoSeleccionado != null && currentUser != null) {
+                            mostrarDialogoPago = true
                         }
                     },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(56.dp),
-                    enabled = metodoSeleccionado != null && currentUser != null
+                    enabled = metodoSeleccionado != null && currentUser != null && !procesandoPago
                 ) {
-                    Text(
-                        text = if (metodoSeleccionado != null)
-                            "Confirmar Pago"
-                        else
-                            "Selecciona un Método de Pago",
-                        style = MaterialTheme.typography.titleMedium
-                    )
+                    if (procesandoPago) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(24.dp),
+                            color = MaterialTheme.colorScheme.onPrimary
+                        )
+                    } else {
+                        Text(
+                            text = if (metodoSeleccionado != null)
+                                "Confirmar Pago"
+                            else
+                                "Selecciona un Método de Pago",
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                    }
                 }
             }
         }
+    }
+    
+    // Diálogo de confirmación de pago ficticio
+    if (mostrarDialogoPago) {
+        AlertDialog(
+            onDismissRequest = { if (!procesandoPago) mostrarDialogoPago = false },
+            icon = {
+                if (!procesandoPago) {
+                    Icon(
+                        imageVector = Icons.Default.ShoppingCart,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
+            },
+            title = {
+                Text(
+                    text = if (procesandoPago) "Procesando Pago..." else "Confirmar Pago",
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold
+                )
+            },
+            text = {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    if (procesandoPago) {
+                        CircularProgressIndicator()
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = "Validando información de pago...",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                        )
+                    } else {
+                        Text(
+                            text = "Este es un proceso de pago ficticio con fines demostrativos.",
+                            style = MaterialTheme.typography.bodyLarge,
+                            fontWeight = FontWeight.Medium
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = "No se realizará ningún cargo real. El pedido se registrará en el sistema.",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = "Total: ${formatoMoneda.format(total)}",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                }
+            },
+            confirmButton = {
+                if (!procesandoPago) {
+                    Button(
+                        onClick = {
+                            procesandoPago = true
+                            val user = currentUser
+                            if (metodoSeleccionado != null && user != null) {
+                                scope.launch {
+                                    // Simular delay de procesamiento
+                                    kotlinx.coroutines.delay(2000)
+                                    
+                                    val numeroPedido = GeneradorNumeroPedido.generar(nombreUsuario)
+                                    val pedido = PedidoCompleto(
+                                        numeroPedido = numeroPedido,
+                                        nombreUsuario = nombreUsuario,
+                                        productos = productos,
+                                        subtotal = subtotal.toDouble(),
+                                        impuestos = impuestos.toDouble(),
+                                        costoEnvio = costoEnvio.toDouble(),
+                                        total = total.toDouble(),
+                                        direccionEnvio = direccionDecodificada,
+                                        telefono = telefonoDecodificado,
+                                        notasAdicionales = notasDecodificadas,
+                                        metodoPago = metodoSeleccionado!!,
+                                        estado = EstadoPedido.CONFIRMADO,
+                                        fechaCreacion = System.currentTimeMillis(),
+                                        fechaConfirmacion = System.currentTimeMillis()
+                                    )
+
+                                    val resultado = pedidosViewModel.agregarPedido(pedido, user.id)
+                                    resultado.onSuccess {
+                                        carritoViewModel.limpiarCarrito()
+                                        mostrarDialogoPago = false
+                                        procesandoPago = false
+                                        navController.navigate(Screen.Success.createRoute(numeroPedido)) {
+                                            popUpTo(Screen.Cart.route) { inclusive = true }
+                                        }
+                                    }
+                                    resultado.onFailure {
+                                        procesandoPago = false
+                                        mostrarDialogoPago = false
+                                    }
+                                }
+                            }
+                        }
+                    ) {
+                        Text("Confirmar Pago Ficticio")
+                    }
+                }
+            },
+            dismissButton = {
+                if (!procesandoPago) {
+                    TextButton(
+                        onClick = { mostrarDialogoPago = false }
+                    ) {
+                        Text("Cancelar")
+                    }
+                }
+            }
+        )
     }
 }
 

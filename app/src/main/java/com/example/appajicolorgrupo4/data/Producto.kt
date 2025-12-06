@@ -1,5 +1,8 @@
 package com.example.appajicolorgrupo4.data
 
+import java.text.NumberFormat
+import java.util.Locale
+
 /**
  * Representa un producto completo en el catálogo
  */
@@ -37,8 +40,15 @@ data class Producto(
      * Ejemplo: 15000 -> "$15000"
      */
     fun precioFormateado(): String {
-        return "$$precio"
+        return "$${formatChileno(precio)}"
     }
+
+    private fun formatChileno(valor: Int): String =
+        try {
+            NumberFormat.getNumberInstance(Locale("es", "CL")).format(valor)
+        } catch (e: Exception) {
+            valor.toString()
+        }
 }
 
 /**

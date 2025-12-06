@@ -11,9 +11,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -51,8 +53,8 @@ fun LoginScreen(
             
             if (estado.isAdmin) {
                 navController.navigate(Screen.AdminProductos.route) {
-                    // Clear the entire backstack so user cannot go back to login
-                    popUpTo(0) { inclusive = true }
+                    // Mantener Login en el backstack pero ir a AdminProductos
+                    popUpTo(Screen.Login.route) { inclusive = false }
                 }
             } else {
                 usuarioViewModel.cargarPerfil()
@@ -74,7 +76,10 @@ fun LoginScreen(
         ) {
             Text(
                 text = "Iniciar Sesión",
-                style = MaterialTheme.typography.headlineLarge,
+                style = MaterialTheme.typography.headlineLarge.copy(
+                    fontWeight = FontWeight.ExtraBold,
+                    shadow = Shadow(color = Color.Black.copy(alpha = 0.5f), blurRadius = 4f)
+                ),
                 color = AmarilloAji
             )
             Spacer(Modifier.height(24.dp))
@@ -83,8 +88,8 @@ fun LoginScreen(
             OutlinedTextField(
                 value = estado.correo,
                 onValueChange = viewModel::onLoginEmailChange,
-                label = { Text("Email", color = MoradoAji) },
-                placeholder = { Text("Ingrese su email", color = MoradoAji) },
+                label = { Text("Email", color = MoradoAji, fontWeight = FontWeight.Bold) },
+                placeholder = { Text("Ingrese su email", color = MoradoAji.copy(alpha = 0.7f)) },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Email
@@ -98,8 +103,8 @@ fun LoginScreen(
                     cursorColor = AmarilloAji,
                     focusedTextColor = MoradoAji,
                     unfocusedTextColor = MoradoAji,
-                    focusedContainerColor = Color.White.copy(alpha = 0.75f),
-                    unfocusedContainerColor = Color.White.copy(alpha = 0.75f)
+                    focusedContainerColor = Color.White,
+                    unfocusedContainerColor = Color.White
                 ),
                 isError = estado.correoError != null,
                 supportingText = {
@@ -115,8 +120,8 @@ fun LoginScreen(
             OutlinedTextField(
                 value = estado.clave,
                 onValueChange = viewModel::onLoginPassChange,
-                label = { Text("Contraseña", color = MoradoAji) },
-                placeholder = { Text("Ingrese su contraseña", color = MoradoAji) },
+                label = { Text("Contraseña", color = MoradoAji, fontWeight = FontWeight.Bold) },
+                placeholder = { Text("Ingrese su contraseña", color = MoradoAji.copy(alpha = 0.7f)) },
                 singleLine = true,
                 visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
                 trailingIcon = {
@@ -137,8 +142,8 @@ fun LoginScreen(
                     cursorColor = AmarilloAji,
                     focusedTextColor = MoradoAji,
                     unfocusedTextColor = MoradoAji,
-                    focusedContainerColor = Color.White.copy(alpha = 0.75f),
-                    unfocusedContainerColor = Color.White.copy(alpha = 0.75f)
+                    focusedContainerColor = Color.White,
+                    unfocusedContainerColor = Color.White
                 )
             )
 
@@ -149,7 +154,10 @@ fun LoginScreen(
                 Text(
                     text = error,
                     color = AmarilloAji,
-                    style = MaterialTheme.typography.bodyMedium
+                    style = MaterialTheme.typography.bodyMedium.copy(
+                        fontWeight = FontWeight.Bold,
+                        shadow = Shadow(color = Color.Black.copy(alpha = 0.3f), blurRadius = 2f)
+                    )
                 )
                 Spacer(Modifier.height(8.dp))
             }
@@ -174,9 +182,9 @@ fun LoginScreen(
                         strokeWidth = 2.dp
                     )
                     Spacer(Modifier.width(8.dp))
-                    Text("Validando...")
+                    Text("Validando...", fontWeight = FontWeight.Bold)
                 } else {
-                    Text("Entrar")
+                    Text("Entrar", fontWeight = FontWeight.ExtraBold)
                 }
             }
 
@@ -194,7 +202,7 @@ fun LoginScreen(
                 ),
                 border = BorderStroke(1.dp, MoradoAji)
             ) {
-                Text("Crear cuenta")
+                Text("Crear cuenta", fontWeight = FontWeight.Bold)
             }
 
             Spacer(Modifier.height(12.dp))
@@ -209,7 +217,7 @@ fun LoginScreen(
                     contentColor = AmarilloAji
                 )
             ) {
-                Text("Recuperar contraseña")
+                Text("Recuperar contraseña", fontWeight = FontWeight.Bold)
             }
         }
     }

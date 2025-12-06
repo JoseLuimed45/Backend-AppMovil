@@ -3,6 +3,163 @@ package com.example.appajicolorgrupo4.data.repository
 import com.example.appajicolorgrupo4.data.models.Product
 import com.example.appajicolorgrupo4.data.remote.ApiService
 import com.example.appajicolorgrupo4.data.remote.NetworkResult
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import okio.Buffer
+import kotlin.test.Test
+import kotlin.test.assertTrue
+import kotlin.test.assertNotNull
+import retrofit2.Response
+
+/**
+ * Pruebas rápidas del ProductRepository para crear y eliminar productos.
+ * Usa un ApiService fake que devuelve respuestas exitosas.
+ */
+class ProductRepositoryTest {
+
+    private class FakeApiService : ApiService {
+        private val store = mutableMapOf<String, Product>()
+
+        override suspend fun getProductos(): Response<List<Product>> =
+            Response.success(store.values.toList())
+
+        override suspend fun getProductoById(id: String): Response<Product> =
+            store[id]?.let { Response.success(it) } ?: Response.error(404, okhttp3.ResponseBody.create(null, ""))
+
+        override suspend fun createProduct(
+            nombre: RequestBody,
+            descripcion: RequestBody,
+            precio: RequestBody,
+            categoria: RequestBody,
+            stock: RequestBody,
+            image: MultipartBody.Part?
+        ): Response<Product> {
+            val p = Product(
+                id = (store.size + 1).toString(),
+                nombre = nombre.string(),
+                descripcion = descripcion.string(),
+                precio = precio.string().toIntOrNull() ?: 0,
+                categoria = categoria.string(),
+                stock = stock.string().toIntOrNull() ?: 0,
+                imagenUrl = null
+            )
+            store[p.id] = p
+            return Response.success(p)
+        }
+
+        override suspend fun updateProduct(
+            id: String,
+            nombre: RequestBody,
+            descripcion: RequestBody,
+            precio: RequestBody,
+            categoria: RequestBody,
+            stock: RequestBody,
+            image: MultipartBody.Part?
+        ): Response<Product> {
+            val existing = store[id] ?: return Response.error(404, okhttp3.ResponseBody.create(null, ""))
+            val updated = existing.copy(
+                nombre = nombre.string(),
+                descripcion = descripcion.string(),
+                precio = precio.string().toIntOrNull() ?: existing.precio,
+                categoria = categoria.string(),
+                stock = stock.string().toIntOrNull() ?: existing.stock
+            )
+            store[id] = updated
+            return Response.success(updated)
+        }
+
+        override suspend fun deleteProduct(id: String): Response<Unit> {
+            return if (store.remove(id) != null) Response.success(Unit)
+            else Response.error(404, okhttp3.ResponseBody.create(null, ""))
+        }
+
+        // Otros métodos no usados en estas pruebas
+        override suspend fun login(loginRequest: com.example.appajicolorgrupo4.data.remote.LoginRequest) =
+            Response.error(501, okhttp3.ResponseBody.create(null, ""))
+        override suspend fun register(user: com.example.appajicolorgrupo4.data.remote.RegisterRequest) =
+            Response.error(501, okhttp3.ResponseBody.create(null, ""))
+        override suspend fun recoverPassword(email: Map<String, String>) =
+            Response.error(501, okhttp3.ResponseBody.create(null, ""))
+        override suspend fun resetPassword(request: com.example.appajicolorgrupo4.data.remote.ResetPasswordRequest) =
+            Response.error(501, okhttp3.ResponseBody.create(null, ""))
+        override suspend fun getPosts(): Response<List<com.example.appajicolorgrupo4.data.models.Post>> =
+            Response.error(501, okhttp3.ResponseBody.create(null, ""))
+        override suspend fun getPostById(postId: Int): Response<com.example.appajicolorgrupo4.data.models.Post> =
+            Response.error(501, okhttp3.ResponseBody.create(null, ""))
+        override suspend fun createOrder(order: com.example.appajicolorgrupo4.data.models.Order) =
+            Response.error(501, okhttp3.ResponseBody.create(null, ""))
+        override suspend fun getOrdersByUser(userId: String) =
+            Response.error(501, okhttp3.ResponseBody.create(null, ""))
+    }
+
+    private fun RequestBody.string(): String =
+        try {
+            val buffer = Buffer()
+            this.writeTo(buffer)
+            buffer.readUtf8()
+        } catch (e: Exception) {
+            ""
+        }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `createProduct devuelve Success y persiste en lista`() = runTest {
+        val repo = ProductRepository(FakeApiService())
+
+        val result = repo.createProduct(
+            nombre = "Polera Aji",
+            descripcion = "Polera serigrafía",
+            precio = 9990,
+            categoria = "Serigrafía",
+            stock = 50,
+            imageFile = null
+        )
+
+        assertTrue(result is NetworkResult.Success)
+        val created = (result as NetworkResult.Success).data
+        assertNotNull(created)
+        assertTrue(created!!.nombre == "Polera Aji")
+
+        val list = repo.getProducts()
+        assertTrue(list is NetworkResult.Success)
+        val productos = (list as NetworkResult.Success).data ?: emptyList()
+        assertTrue(productos.any { it.id == created!!.id })
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `deleteProduct devuelve Success y desaparece de lista`() = runTest {
+        val service = FakeApiService()
+        val repo = ProductRepository(service)
+
+        // Crear primero
+        val created = repo.createProduct(
+            nombre = "Polera B",
+            descripcion = "Polera dtf",
+            precio = 12990,
+            categoria = "DTF",
+            stock = 20,
+            imageFile = null
+        )
+        val id = (created as NetworkResult.Success).data!!.id
+
+        // Eliminar
+        val del = repo.deleteProduct(id)
+        assertTrue(del is NetworkResult.Success)
+
+        // Verificar que no está
+        val list = repo.getProducts()
+        val productos = (list as NetworkResult.Success).data ?: emptyList()
+        assertTrue(productos.none { it.id == id })
+    }
+}
+package com.example.appajicolorgrupo4.data.repository
+
+import com.example.appajicolorgrupo4.data.models.Product
+import com.example.appajicolorgrupo4.data.remote.ApiService
+import com.example.appajicolorgrupo4.data.remote.NetworkResult
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
