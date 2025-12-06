@@ -66,7 +66,7 @@ class SafeApiCallTest : SafeApiCall() {
 
         // Then
         assertTrue(result is NetworkResult.Error)
-        assertEquals("Error técnico del servidor (Posible 502/504).", (result as NetworkResult.Error).message)
+        assertEquals("El backend está despertando (código 502). Reintenta en unos segundos.", (result as NetworkResult.Error).message)
     }
 
     @Test
@@ -81,7 +81,7 @@ class SafeApiCallTest : SafeApiCall() {
 
         // Then
         assertTrue(result is NetworkResult.Error)
-        assertEquals("Error técnico del servidor (Posible 502/504).", (result as NetworkResult.Error).message)
+        assertEquals("El backend está despertando (código 503). Reintenta en unos segundos.", (result as NetworkResult.Error).message)
     }
 
     @Test
@@ -193,7 +193,7 @@ class SafeApiCallTest : SafeApiCall() {
 
         // Then
         assertTrue(result is NetworkResult.Error)
-        assertEquals("Resource not found", (result as NetworkResult.Error).message)
+        assertEquals("Recurso no encontrado (404). Verifica ruta / api / versión.", (result as NetworkResult.Error).message)
     }
 
     @Test
@@ -207,7 +207,7 @@ class SafeApiCallTest : SafeApiCall() {
 
         // Then
         assertTrue(result is NetworkResult.Error)
-        assertEquals("Unauthorized access", (result as NetworkResult.Error).message)
+        assertEquals("No autorizado (401). Revisa credenciales o token.", (result as NetworkResult.Error).message)
     }
 
     @Test
@@ -255,5 +255,14 @@ class SafeApiCallTest : SafeApiCall() {
         // Then
         assertTrue(result is NetworkResult.Success)
         assertTrue((result as NetworkResult.Success).data?.isEmpty() == true)
+    }
+
+    @Test
+    fun `safeApiCall should map deployment not found error`() = runTest {
+        val errorBody = "DEPLOYMENT_NOT_FOUND".toResponseBody("text/plain".toMediaTypeOrNull())
+        val mockCall: suspend () -> Response<String> = { Response.error(404, errorBody) }
+        val result = safeApiCall(mockCall)
+        assertTrue(result is NetworkResult.Error)
+        assertTrue((result as NetworkResult.Error).message?.contains("Deployment Vercel no encontrado") == true)
     }
 }

@@ -32,7 +32,7 @@ android {
             // OPCIÓN 1: Usar firma existente de Alejandro Placencia
             storeFile = file("keystore/alejandro-key.jks")
             storePassword = "35203520"
-            keyAlias = "key0"
+            keyAlias = "key0"  // Alias del keystore de Alejandro
             keyPassword = "35203520"
 
             // OPCIÓN 2: Si prefieres usar la firma generada automáticamente, comenta las líneas de arriba y descomenta estas:
@@ -64,6 +64,7 @@ android {
         compose = true
         buildConfig = true
     }
+    ndkVersion = "27.0.12077973"
 }
 
 dependencies {

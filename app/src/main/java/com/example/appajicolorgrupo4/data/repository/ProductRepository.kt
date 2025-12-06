@@ -24,7 +24,7 @@ class ProductRepository(
     suspend fun createProduct(
         nombre: String,
         descripcion: String,
-        precio: Int,
+        precio: Int, // Revertido a Int
         categoria: String,
         stock: Int,
         imageFile: File?
@@ -49,7 +49,7 @@ class ProductRepository(
         id: String,
         nombre: String,
         descripcion: String,
-        precio: Int,
+        precio: Int, // Revertido a Int
         categoria: String,
         stock: Int,
         imageFile: File?
