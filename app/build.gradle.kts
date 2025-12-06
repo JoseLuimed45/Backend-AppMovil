@@ -23,7 +23,7 @@ android {
             arg("room.schemaLocation", "$projectDir/schemas")
         }
         
-        buildConfigField("String", "BASE_URL", "\"https://ajicolorbackend.vercel.app/api/v1/\"")
+        buildConfigField("String", "BASE_URL", "\"https://backend-app-movil.vercel.app/\"")
     }
 
     // Configuración de firma para release (Alejandro Placencia)
