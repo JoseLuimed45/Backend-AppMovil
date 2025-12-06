@@ -136,9 +136,16 @@ class AdminProductViewModel(
     }
 
     /**
-     * Elimina un producto
+     * Elimina un producto de forma segura, aceptando un ID que podría ser nulo.
      */
-    fun eliminarProducto(id: String) {
+    fun eliminarProducto(id: String?) {
+        // Validación defensiva: no hacer nada si el ID es nulo o está en blanco.
+        if (id.isNullOrBlank()) {
+            _error.value = "ID de producto inválido para eliminar."
+            Log.w("AdminProductVM", "Se intentó eliminar un producto con ID nulo o vacío.")
+            return
+        }
+
         viewModelScope.launch {
             _isLoading.value = true
             _error.value = null

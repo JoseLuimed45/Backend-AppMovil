@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.appajicolorgrupo4.data.EstadoPedido
 import com.example.appajicolorgrupo4.data.PedidoCompleto
 import com.example.appajicolorgrupo4.navigation.Screen
 import com.example.appajicolorgrupo4.ui.components.AppBackground
@@ -220,17 +221,16 @@ private fun PedidoAdminCard(
                         color = MoradoAji
                     )
                     Surface(
-                        color = when (pedido.estado.nombre) {
-                            "Confirmado" -> MaterialTheme.colorScheme.primaryContainer
-                            "En Preparación" -> AmarilloAji.copy(alpha = 0.3f)
-                            "En Camino" -> MaterialTheme.colorScheme.tertiaryContainer
-                            "Entregado" -> MaterialTheme.colorScheme.secondaryContainer
-                            else -> MaterialTheme.colorScheme.surfaceVariant
+                        color = when (pedido.estado) {
+                            EstadoPedido.CONFIRMADO -> MaterialTheme.colorScheme.primaryContainer
+                            EstadoPedido.PREPARANDO -> AmarilloAji.copy(alpha = 0.3f)
+                            EstadoPedido.ENVIADO -> MaterialTheme.colorScheme.tertiaryContainer
+                            EstadoPedido.ENTREGADO -> MaterialTheme.colorScheme.secondaryContainer
                         },
                         shape = MaterialTheme.shapes.small
                     ) {
                         Text(
-                            text = pedido.estado.nombre,
+                            text = pedido.estado.displayName,
                             modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                             style = MaterialTheme.typography.labelMedium,
                             fontWeight = FontWeight.Bold

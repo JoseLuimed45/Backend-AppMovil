@@ -193,11 +193,14 @@ fun AdminProductosScreen(navController: NavController) {
             text = { Text("¿Eliminar '${selectedProduct?.nombre}'?", color = MoradoAjiOscuro) },
             confirmButton = {
                 Button(
-                    onClick = { 
-                        Log.d("AdminProductos", "Deleting product: ${selectedProduct?.id}")
-                        selectedProduct?.let { viewModel.eliminarProducto(it.id) }
+                    onClick = {
+                        // Invocación segura: solo se llama si selectedProduct y su id no son nulos.
+                        selectedProduct?.id?.let { productId ->
+                            Log.d("AdminProductos", "Confirmado eliminar producto ID: $productId")
+                            viewModel.eliminarProducto(productId)
+                        }
                         showDeleteDialog = false
-                        selectedProduct = null 
+                        selectedProduct = null
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
                 ) { Text("Eliminar") }
