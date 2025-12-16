@@ -1,38 +1,54 @@
 package com.example.appajicolorgrupo4.data.remote
 
-import android.util.Log
 import java.io.IOException
 import org.json.JSONObject
 import retrofit2.Response
 
 abstract class SafeApiCall {
+
+    // Función de logging que funciona en tests y producción
+    private fun log(tag: String, message: String) {
+        try {
+            android.util.Log.d(tag, message)
+        } catch (e: RuntimeException) {
+            // En tests unitarios, android.util.Log no está disponible
+            println("$tag: $message")
+        }
+    }
+
+    private fun logError(tag: String, message: String, throwable: Throwable? = null) {
+        try {
+            android.util.Log.e(tag, message, throwable)
+        } catch (e: RuntimeException) {
+            println("$tag: $message ${throwable?.message ?: ""}")
+        }
+    }
+
     suspend fun <T> safeApiCall(call: suspend () -> Response<T>): NetworkResult<T> {
         return try {
             val response = call()
-            Log.d(
-                    "SafeApiCall",
-                    "Response code: ${response.code()}, isSuccessful: ${response.isSuccessful}"
-            )
+            log("SafeApiCall", "Response code: ${response.code()}, isSuccessful: ${response.isSuccessful}")
+
             if (response.isSuccessful) {
                 val body = response.body()
                 if (body != null) {
-                    Log.d("SafeApiCall", "Success with body")
+                    log("SafeApiCall", "Success with body")
                     NetworkResult.Success(body)
                 } else {
-                    Log.d("SafeApiCall", "Success but body is null")
+                    log("SafeApiCall", "Success but body is null")
                     NetworkResult.Error("Response body is null")
                 }
             } else {
                 val code = response.code()
                 val rawErrorBody = response.errorBody()?.string()
-                Log.d("SafeApiCall", "Error code: $code, body length: ${rawErrorBody?.length}")
-                Log.d("SafeApiCall", "Full error body: $rawErrorBody")
+                log("SafeApiCall", "Error code: $code, body length: ${rawErrorBody?.length}")
+                log("SafeApiCall", "Full error body: $rawErrorBody")
                 val cleaned = rawErrorBody?.trim()
                 val errorMessage = buildErrorMessage(code, cleaned)
                 NetworkResult.Error(errorMessage)
             }
         } catch (e: Exception) {
-            Log.e("SafeApiCall", "Exception: ${e.message}", e)
+            logError("SafeApiCall", "Exception: ${e.message}", e)
             val errorMessage =
                     when (e) {
                         is java.net.SocketTimeoutException ->

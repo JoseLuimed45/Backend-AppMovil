@@ -1,6 +1,5 @@
 package com.example.appajicolorgrupo4.data.repository
 
-import android.util.Log
 import com.example.appajicolorgrupo4.data.models.Product
 import com.example.appajicolorgrupo4.data.remote.ApiService
 import com.example.appajicolorgrupo4.data.remote.CreateProductRequest
@@ -14,10 +13,18 @@ import okhttp3.RequestBody.Companion.toRequestBody
 
 class ProductRepository(private val apiService: ApiService) : SafeApiCall() {
 
+    private fun log(message: String) {
+        try {
+            android.util.Log.d("ProductRepo", message)
+        } catch (e: RuntimeException) {
+            println("ProductRepo: $message")
+        }
+    }
+
     suspend fun getProducts(): NetworkResult<List<Product>> {
-        Log.d("ProductRepo", "Fetching products from /api/v1/productos")
+        log("Fetching products from /api/v1/productos")
         return safeApiCall {
-            Log.d("ProductRepo", "Making API call...")
+            log("Making API call...")
             apiService.getProductos()
         }
     }
@@ -34,10 +41,7 @@ class ProductRepository(private val apiService: ApiService) : SafeApiCall() {
             stock: Int,
             imageFile: File?
     ): NetworkResult<Product> {
-        Log.d(
-                "ProductRepo",
-                "createProduct: nombre='$nombre', desc='$descripcion', precio=$precio, cat='$categoria', stock=$stock, image=${imageFile?.name}"
-        )
+        log("createProduct: nombre='$nombre', desc='$descripcion', precio=$precio, cat='$categoria', stock=$stock, image=${imageFile?.name}")
         return safeApiCall {
             // Generar un ID único para el producto
             val productId =
@@ -45,7 +49,7 @@ class ProductRepository(private val apiService: ApiService) : SafeApiCall() {
 
             if (imageFile == null) {
                 // Sin imagen: usar endpoint JSON
-                Log.d("ProductRepo", "Using JSON endpoint (no image) with ID: $productId")
+                log("Using JSON endpoint (no image) with ID: $productId")
                 val request =
                         CreateProductRequest(
                                 id = productId,
@@ -55,11 +59,11 @@ class ProductRepository(private val apiService: ApiService) : SafeApiCall() {
                                 categoria = categoria,
                                 stock = stock
                         )
-                Log.d("ProductRepo", "CreateProductRequest: $request")
+                log("CreateProductRequest: $request")
                 apiService.createProductJson(request)
             } else {
                 // Con imagen: usar endpoint multipart
-                Log.d("ProductRepo", "Using multipart endpoint (with image) with ID: $productId")
+                log("Using multipart endpoint (with image) with ID: $productId")
                 val nombrePart = nombre.toRequestBody("text/plain".toMediaTypeOrNull())
                 val descPart = descripcion.toRequestBody("text/plain".toMediaTypeOrNull())
                 val precioPart = precio.toString().toRequestBody("text/plain".toMediaTypeOrNull())
@@ -93,14 +97,11 @@ class ProductRepository(private val apiService: ApiService) : SafeApiCall() {
             stock: Int,
             imageFile: File?
     ): NetworkResult<Product> {
-        Log.d(
-                "ProductRepo",
-                "updateProduct: id=$id, nombre='$nombre', desc='$descripcion', precio=$precio, cat='$categoria', stock=$stock, image=${imageFile?.name}"
-        )
+        log("updateProduct: id=$id, nombre='$nombre', desc='$descripcion', precio=$precio, cat='$categoria', stock=$stock, image=${imageFile?.name}")
         return safeApiCall {
             if (imageFile == null) {
                 // Sin imagen: usar endpoint JSON
-                Log.d("ProductRepo", "Using JSON endpoint (no image)")
+                log("Using JSON endpoint (no image)")
                 val request =
                         UpdateProductRequest(
                                 nombre = nombre,
@@ -112,7 +113,7 @@ class ProductRepository(private val apiService: ApiService) : SafeApiCall() {
                 apiService.updateProductJson(id, request)
             } else {
                 // Con imagen: usar endpoint multipart
-                Log.d("ProductRepo", "Using multipart endpoint (with image)")
+                log("Using multipart endpoint (with image)")
                 val nombrePart = nombre.toRequestBody("text/plain".toMediaTypeOrNull())
                 val descPart = descripcion.toRequestBody("text/plain".toMediaTypeOrNull())
                 val precioPart = precio.toString().toRequestBody("text/plain".toMediaTypeOrNull())

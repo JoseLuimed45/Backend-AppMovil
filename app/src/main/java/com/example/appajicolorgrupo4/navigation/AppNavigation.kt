@@ -84,8 +84,19 @@ fun AppNavigation() {
         // Flujo Principal
         composable(Screen.Home.route) { HomeScreen(mainViewModel, usuarioViewModel) }
         composable(Screen.Profile.route) { ProfileScreen(mainViewModel, usuarioViewModel) }
-        composable(Screen.Settings.route) { SettingScreen(mainViewModel) }
-        composable(Screen.Notification.route) { NotificationScreen(mainViewModel, notificacionesViewModel) }
+        composable(Screen.Settings.route) {
+            SettingScreen(
+                mainViewModel = mainViewModel,
+                onLogoutClick = { usuarioViewModel.cerrarSesion() }
+            )
+        }
+        composable(Screen.Notification.route) {
+            NotificationScreen(
+                mainViewModel = mainViewModel,
+                notificacionesViewModel = notificacionesViewModel,
+                usuarioViewModel = usuarioViewModel
+            )
+        }
         composable(Screen.Debug.route) { DebugScreen(mainViewModel, usuarioViewModel) }
 
         // Flujo de Comercio

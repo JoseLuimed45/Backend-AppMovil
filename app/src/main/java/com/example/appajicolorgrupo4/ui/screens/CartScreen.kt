@@ -40,7 +40,7 @@ import java.util.Locale
 fun CartScreen(
     carritoViewModel: CarritoViewModel,
     mainViewModel: MainViewModel,
-    usuarioViewModel: UsuarioViewModel // Parámetro añadido
+    usuarioViewModel: UsuarioViewModel
 ) {
     val productos by carritoViewModel.productos.collectAsState()
     // ... (el resto de los estados del carrito)
@@ -59,7 +59,7 @@ fun CartScreen(
             onNotificationsClick = { mainViewModel.navigate(Screen.Notification.route) },
             onCartClick = { /* Ya estás aquí */ },
             onOrderHistoryClick = { mainViewModel.navigate(Screen.OrderHistory.route) },
-            onLogoutClick = { usuarioViewModel.cerrarSesion() } // Parámetro añadido
+            onLogoutClick = { usuarioViewModel.cerrarSesion() } // CORREGIDO
         ) {
             Scaffold(
                 topBar = {
@@ -83,5 +83,3 @@ fun CartScreen(
         }
     }
 }
-
-// ... (El composable ProductoCarritoItem se mantiene igual)

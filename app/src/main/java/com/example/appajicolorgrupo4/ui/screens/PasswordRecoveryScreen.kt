@@ -19,7 +19,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.appajicolorgrupo4.R
 import com.example.appajicolorgrupo4.ui.components.AppBackground
-import com.example.appajicolorgrupo4.ui.theme.AmarilloAji
 import com.example.appajicolorgrupo4.viewmodel.AuthViewModel
 import com.example.appajicolorgrupo4.viewmodel.MainViewModel
 
@@ -50,7 +49,7 @@ fun PasswordRecoveryScreen(
             if (currentStep == 1) {
                 Image(painter = painterResource(id = R.drawable.recovery), "...", Modifier.size(150.dp))
                 Spacer(Modifier.height(24.dp))
-                Text("Recuperar Contraseña", style = MaterialTheme.typography.headlineMedium, color = AmarilloAji)
+                Text("Recuperar Contraseña", style = MaterialTheme.typography.headlineMedium, color = MaterialTheme.colorScheme.primary)
                 Spacer(Modifier.height(8.dp))
                 Text("Ingresa tu correo...", style = MaterialTheme.typography.bodyMedium, textAlign = TextAlign.Center)
                 Spacer(Modifier.height(32.dp))
@@ -62,10 +61,10 @@ fun PasswordRecoveryScreen(
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
                     isError = recoverState.emailError != null,
-                    supportingText = { recoverState.emailError?.let { Text(it, color = Color.Red) } }
+                    supportingText = { recoverState.emailError?.let { Text(it, color = MaterialTheme.colorScheme.error) } }
                 )
 
-                recoverState.error?.let { Text(it, color = Color.Red, modifier = Modifier.padding(top = 8.dp)) }
+                recoverState.error?.let { Text(it, color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(top = 8.dp)) }
 
                 Spacer(Modifier.height(24.dp))
 
@@ -82,7 +81,7 @@ fun PasswordRecoveryScreen(
             } else {
                 Image(painter = painterResource(id = R.drawable.envio_correo), "...", Modifier.size(120.dp))
                 Spacer(Modifier.height(24.dp))
-                Text("Restablecer Contraseña", style = MaterialTheme.typography.headlineMedium, color = AmarilloAji)
+                Text("Restablecer Contraseña", style = MaterialTheme.typography.headlineMedium, color = MaterialTheme.colorScheme.primary)
                 Text("Hemos enviado un código a ${recoverState.email}", style = MaterialTheme.typography.bodySmall)
                 Spacer(Modifier.height(24.dp))
 

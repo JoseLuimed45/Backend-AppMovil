@@ -23,23 +23,37 @@ class PedidosViewModelTest {
     @get:Rule
     val mainDispatcherRule = MainDispatcherRule()
 
+    private val mockMainViewModel: MainViewModel = mockk(relaxed = true)
+    private val mockCarritoViewModel: CarritoViewModel = mockk(relaxed = true)
+    private val mockUsuarioViewModel: UsuarioViewModel = mockk(relaxed = true)
     private val mockPedidoRepository: RemotePedidoRepository = mockk(relaxed = true)
     private lateinit var viewModel: PedidosViewModel
 
     @Test
     fun `viewModel initializes successfully`() = runTest {
-        viewModel = PedidosViewModel(mockPedidoRepository)
+        viewModel = PedidosViewModel(
+            mainViewModel = mockMainViewModel,
+            carritoViewModel = mockCarritoViewModel,
+            usuarioViewModel = mockUsuarioViewModel,
+            pedidoRepository = mockPedidoRepository
+        )
         advanceUntilIdle()
 
         assertNotNull(viewModel.pedidos.value)
+        assertEquals(0, viewModel.pedidos.value.size)
     }
 
     @Test
-    fun `totalPedidos returns correct count`() = runTest {
-        viewModel = PedidosViewModel(mockPedidoRepository)
+    fun `pedidos flow emits empty list initially`() = runTest {
+        viewModel = PedidosViewModel(
+            mainViewModel = mockMainViewModel,
+            carritoViewModel = mockCarritoViewModel,
+            usuarioViewModel = mockUsuarioViewModel,
+            pedidoRepository = mockPedidoRepository
+        )
         advanceUntilIdle()
 
-        assertTrue(viewModel.totalPedidos() >= 0)
+        assertTrue(viewModel.pedidos.value.isEmpty())
     }
 }
 

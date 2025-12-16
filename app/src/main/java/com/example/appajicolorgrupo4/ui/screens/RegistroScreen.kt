@@ -16,8 +16,6 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.example.appajicolorgrupo4.navigation.Screen
 import com.example.appajicolorgrupo4.ui.components.AppBackground
-import com.example.appajicolorgrupo4.ui.theme.AmarilloAji
-import com.example.appajicolorgrupo4.ui.theme.MoradoAji
 import com.example.appajicolorgrupo4.viewmodel.AuthViewModel
 import com.example.appajicolorgrupo4.viewmodel.MainViewModel
 
@@ -45,34 +43,34 @@ fun RegistroScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Text("Crear Cuenta", style = MaterialTheme.typography.headlineLarge, color = AmarilloAji)
+            Text("Crear Cuenta", style = MaterialTheme.typography.headlineLarge, color = MaterialTheme.colorScheme.primary)
             Spacer(Modifier.height(16.dp))
 
             OutlinedTextField(
                 value = registerState.nombre,
                 onValueChange = authViewModel::onNameChange,
-                label = { Text("Nombre Completo", color = MoradoAji) },
+                label = { Text("Nombre Completo") },
                 modifier = Modifier.fillMaxWidth(),
                 isError = registerState.nombreError != null,
-                supportingText = { registerState.nombreError?.let { Text(it, color = Color.Red) } }
+                supportingText = { registerState.nombreError?.let { Text(it, color = MaterialTheme.colorScheme.error) } }
             )
             Spacer(Modifier.height(8.dp))
 
             OutlinedTextField(
                 value = registerState.correo,
                 onValueChange = authViewModel::onRegisterEmailChange,
-                label = { Text("Correo Electrónico", color = MoradoAji) },
+                label = { Text("Correo Electrónico") },
                 modifier = Modifier.fillMaxWidth(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                 isError = registerState.correoError != null,
-                supportingText = { registerState.correoError?.let { Text(it, color = Color.Red) } }
+                supportingText = { registerState.correoError?.let { Text(it, color = MaterialTheme.colorScheme.error) } }
             )
             Spacer(Modifier.height(8.dp))
 
             OutlinedTextField(
                 value = registerState.telefono,
                 onValueChange = authViewModel::onTelefonoChange,
-                label = { Text("Teléfono", color = MoradoAji) },
+                label = { Text("Teléfono") },
                 modifier = Modifier.fillMaxWidth(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone)
             )
@@ -81,7 +79,7 @@ fun RegistroScreen(
             OutlinedTextField(
                 value = registerState.direccion,
                 onValueChange = authViewModel::onDireccionChange,
-                label = { Text("Dirección", color = MoradoAji) },
+                label = { Text("Dirección") },
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(Modifier.height(8.dp))
@@ -89,24 +87,24 @@ fun RegistroScreen(
             OutlinedTextField(
                 value = registerState.clave,
                 onValueChange = authViewModel::onRegisterPassChange,
-                label = { Text("Contraseña", color = MoradoAji) },
+                label = { Text("Contraseña") },
                 modifier = Modifier.fillMaxWidth(),
                 visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
                 trailingIcon = { IconButton(onClick = { showPassword = !showPassword }) { Icon(if (showPassword) Icons.Default.Visibility else Icons.Default.VisibilityOff, null) } },
                 isError = registerState.claveError != null,
-                supportingText = { registerState.claveError?.let { Text(it, color = Color.Red) } }
+                supportingText = { registerState.claveError?.let { Text(it, color = MaterialTheme.colorScheme.error) } }
             )
             Spacer(Modifier.height(8.dp))
 
             OutlinedTextField(
                 value = registerState.confirm,
                 onValueChange = authViewModel::onConfirmChange,
-                label = { Text("Confirmar Contraseña", color = MoradoAji) },
+                label = { Text("Confirmar Contraseña") },
                 modifier = Modifier.fillMaxWidth(),
                 visualTransformation = if (showConfirmPassword) VisualTransformation.None else PasswordVisualTransformation(),
                 trailingIcon = { IconButton(onClick = { showConfirmPassword = !showConfirmPassword }) { Icon(if (showConfirmPassword) Icons.Default.Visibility else Icons.Default.VisibilityOff, null) } },
                 isError = registerState.confirmError != null,
-                supportingText = { registerState.confirmError?.let { Text(it, color = Color.Red) } }
+                supportingText = { registerState.confirmError?.let { Text(it, color = MaterialTheme.colorScheme.error) } }
             )
             Spacer(Modifier.height(16.dp))
 
@@ -124,7 +122,7 @@ fun RegistroScreen(
             Spacer(Modifier.height(8.dp))
 
             TextButton(onClick = { mainViewModel.navigate(Screen.Login.route) }) {
-                Text("¿Ya tienes cuenta? Inicia Sesión", color = AmarilloAji)
+                Text("¿Ya tienes cuenta? Inicia Sesión", color = MaterialTheme.colorScheme.primary)
             }
         }
     }

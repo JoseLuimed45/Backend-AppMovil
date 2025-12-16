@@ -19,8 +19,6 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.example.appajicolorgrupo4.ui.components.AppBackground
 import com.example.appajicolorgrupo4.navigation.Screen
-import com.example.appajicolorgrupo4.ui.theme.AmarilloAji
-import com.example.appajicolorgrupo4.ui.theme.MoradoAji
 import com.example.appajicolorgrupo4.viewmodel.AuthViewModel
 import com.example.appajicolorgrupo4.viewmodel.MainViewModel
 
@@ -44,19 +42,19 @@ fun LoginScreen(
                     fontWeight = FontWeight.ExtraBold,
                     shadow = Shadow(color = Color.Black.copy(alpha = 0.5f), blurRadius = 4f)
                 ),
-                color = AmarilloAji
+                color = MaterialTheme.colorScheme.primary
             )
             Spacer(Modifier.height(24.dp))
 
             OutlinedTextField(
                 value = estado.correo,
                 onValueChange = authViewModel::onLoginEmailChange,
-                label = { Text("Email", color = MoradoAji) },
+                label = { Text("Email") },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                 modifier = Modifier.fillMaxWidth(),
                 isError = estado.correoError != null,
-                supportingText = { estado.correoError?.let { Text(it, color = Color.Red) } }
+                supportingText = { estado.correoError?.let { Text(it, color = MaterialTheme.colorScheme.error) } }
             )
 
             Spacer(Modifier.height(12.dp))
@@ -64,7 +62,7 @@ fun LoginScreen(
             OutlinedTextField(
                 value = estado.clave,
                 onValueChange = authViewModel::onLoginPassChange,
-                label = { Text("Contraseña", color = MoradoAji) },
+                label = { Text("Contraseña") },
                 singleLine = true,
                 visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
                 trailingIcon = {
@@ -78,7 +76,7 @@ fun LoginScreen(
             Spacer(Modifier.height(16.dp))
 
             estado.errorMsg?.let {
-                Text(it, color = Color.Red, style = MaterialTheme.typography.bodyMedium)
+                Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodyMedium)
                 Spacer(Modifier.height(8.dp))
             }
 

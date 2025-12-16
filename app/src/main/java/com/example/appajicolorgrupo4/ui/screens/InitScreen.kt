@@ -14,7 +14,6 @@ import androidx.compose.ui.unit.dp
 import com.example.appajicolorgrupo4.R
 import com.example.appajicolorgrupo4.navigation.Screen
 import com.example.appajicolorgrupo4.ui.components.AppBackground
-import com.example.appajicolorgrupo4.ui.theme.AmarilloAji
 import com.example.appajicolorgrupo4.viewmodel.MainViewModel
 
 @Composable
@@ -35,7 +34,7 @@ fun InitScreen(
                 style = MaterialTheme.typography.headlineLarge.copy(
                     fontWeight = FontWeight.Bold
                 ),
-                color = AmarilloAji
+                color = MaterialTheme.colorScheme.primary
             )
 
             Spacer(modifier = Modifier.height(64.dp))

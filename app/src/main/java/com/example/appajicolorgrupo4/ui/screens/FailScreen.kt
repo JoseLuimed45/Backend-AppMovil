@@ -10,7 +10,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.appajicolorgrupo4.ui.components.AppBackground
-import com.example.appajicolorgrupo4.ui.theme.AmarilloAji
 
 @Composable
 fun FailScreen(
@@ -28,7 +27,7 @@ fun FailScreen(
                 imageVector = Icons.Default.Close,
                 contentDescription = "Error",
                 modifier = Modifier.size(120.dp),
-                tint = AmarilloAji
+                tint = MaterialTheme.colorScheme.error
             )
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -36,7 +35,7 @@ fun FailScreen(
             Text(
                 text = "Pago Fallido",
                 style = MaterialTheme.typography.headlineLarge,
-                color = AmarilloAji
+                color = MaterialTheme.colorScheme.error
             )
 
             Spacer(modifier = Modifier.height(16.dp))

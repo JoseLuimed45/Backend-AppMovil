@@ -17,8 +17,6 @@ import com.example.appajicolorgrupo4.data.PedidoCompleto
 import com.example.appajicolorgrupo4.data.session.SessionManager
 import com.example.appajicolorgrupo4.navigation.Screen
 import com.example.appajicolorgrupo4.ui.components.AppBackground
-import com.example.appajicolorgrupo4.ui.theme.AmarilloAji
-import com.example.appajicolorgrupo4.ui.theme.MoradoAji
 import com.example.appajicolorgrupo4.viewmodel.MainViewModel
 import com.example.appajicolorgrupo4.viewmodel.PedidosViewModel
 import java.text.NumberFormat
@@ -62,17 +60,17 @@ fun AdminPedidosScreen(
                     title = { 
                         Text(
                             "Todos los Pedidos",
-                            color = AmarilloAji,
+                            color = MaterialTheme.colorScheme.onPrimary,
                             fontWeight = FontWeight.Bold
                         ) 
                     },
                     navigationIcon = {
                         IconButton(onClick = { mainViewModel.navigateBack() }) {
-                            Icon(Icons.Default.ArrowBack, "Volver", tint = AmarilloAji)
+                            Icon(Icons.Default.ArrowBack, "Volver", tint = MaterialTheme.colorScheme.onPrimary)
                         }
                     },
                     colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = MoradoAji
+                        containerColor = MaterialTheme.colorScheme.primary
                     )
                 )
             },

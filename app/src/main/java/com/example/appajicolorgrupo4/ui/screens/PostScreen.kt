@@ -9,8 +9,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.appajicolorgrupo4.viewmodel.PostViewModel
-import com.example.appajicolorgrupo4.ui.theme.AmarilloAji
-import com.example.appajicolorgrupo4.ui.theme.MoradoAji
 import com.example.appajicolorgrupo4.ui.components.AppBackground
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -22,10 +20,10 @@ fun PostScreen(viewModel: PostViewModel) {
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text("Listado de Posts", color = AmarilloAji) },
+                    title = { Text("Listado de Posts") },
                     colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = MoradoAji,
-                        titleContentColor = AmarilloAji
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        titleContentColor = MaterialTheme.colorScheme.onPrimary
                     )
                 )
             },
@@ -54,7 +52,7 @@ fun PostScreen(viewModel: PostViewModel) {
                                 Text(
                                     text = post.title,
                                     style = MaterialTheme.typography.titleMedium,
-                                    color = MoradoAji
+                                    color = MaterialTheme.colorScheme.primary
                                 )
                                 Spacer(modifier = Modifier.height(4.dp))
                                 Text(

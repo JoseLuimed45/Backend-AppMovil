@@ -16,8 +16,6 @@ import com.example.appajicolorgrupo4.data.local.user.UserEntity
 import com.example.appajicolorgrupo4.data.session.SessionManager
 import com.example.appajicolorgrupo4.navigation.Screen
 import com.example.appajicolorgrupo4.ui.components.AppBackground
-import com.example.appajicolorgrupo4.ui.theme.AmarilloAji
-import com.example.appajicolorgrupo4.ui.theme.MoradoAji
 import com.example.appajicolorgrupo4.viewmodel.MainViewModel
 import com.example.appajicolorgrupo4.viewmodel.UsuarioViewModel
 
@@ -57,16 +55,16 @@ fun AdminUsuariosScreen(
                     title = { 
                         Text(
                             "Usuarios Registrados",
-                            color = AmarilloAji,
+                            color = MaterialTheme.colorScheme.onPrimary,
                             fontWeight = FontWeight.Bold
                         ) 
                     },
                     navigationIcon = {
                         IconButton(onClick = { mainViewModel.navigateBack() }) {
-                            Icon(Icons.Default.ArrowBack, "Volver", tint = AmarilloAji)
+                            Icon(Icons.Default.ArrowBack, "Volver", tint = MaterialTheme.colorScheme.onPrimary)
                         }
                     },
-                    colors = TopAppBarDefaults.topAppBarColors(containerColor = MoradoAji)
+                    colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.primary)
                 )
             },
             containerColor = androidx.compose.ui.graphics.Color.Transparent

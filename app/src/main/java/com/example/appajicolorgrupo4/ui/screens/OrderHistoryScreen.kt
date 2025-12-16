@@ -24,7 +24,6 @@ import com.example.appajicolorgrupo4.ui.components.AppBackground
 import com.example.appajicolorgrupo4.ui.components.AppNavigationDrawer
 import com.example.appajicolorgrupo4.ui.components.BottomNavigationBar
 import com.example.appajicolorgrupo4.ui.components.TopBarWithCart
-import com.example.appajicolorgrupo4.ui.theme.MoradoAji
 import com.example.appajicolorgrupo4.viewmodel.MainViewModel
 import com.example.appajicolorgrupo4.viewmodel.PedidosViewModel
 import com.example.appajicolorgrupo4.viewmodel.UsuarioViewModel
@@ -93,13 +92,13 @@ fun OrderHistoryScreen(
                             imageVector = Icons.AutoMirrored.Filled.List,
                             contentDescription = "Sin pedidos",
                             modifier = Modifier.size(80.dp),
-                            tint = MoradoAji
+                            tint = MaterialTheme.colorScheme.primary
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                         Text(
                             text = "Aún no tienes pedidos",
                             style = MaterialTheme.typography.titleLarge,
-                            color = MoradoAji,
+                            color = MaterialTheme.colorScheme.onBackground,
                             textAlign = TextAlign.Center
                         )
                     }

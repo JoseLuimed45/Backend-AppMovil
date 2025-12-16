@@ -12,8 +12,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.appajicolorgrupo4.navigation.Screen
 import com.example.appajicolorgrupo4.ui.components.*
-import com.example.appajicolorgrupo4.ui.theme.AmarilloAji
-import com.example.appajicolorgrupo4.ui.theme.MoradoAji
 import com.example.appajicolorgrupo4.viewmodel.MainViewModel
 import com.example.appajicolorgrupo4.viewmodel.UsuarioViewModel
 import kotlinx.coroutines.launch
@@ -70,7 +68,7 @@ fun HomeScreen(
                         text = "¡Bienvenido a Aji Color!",
                         style = MaterialTheme.typography.headlineMedium,
                         fontWeight = FontWeight.Bold,
-                        color = AmarilloAji,
+                        color = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp)
                     )
 
@@ -100,12 +98,11 @@ fun HomeScreen(
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = AmarilloAji,
-                            contentColor = MoradoAji
-                        ),
-                        border = BorderStroke(2.dp, MoradoAji)
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.onPrimary
+                        )
                     ) {
-                        Text("Ver Todo el Catálogo", color = MoradoAji)
+                        Text("Ver Todo el Catálogo")
                     }
 
                     Spacer(modifier = Modifier.height(16.dp))

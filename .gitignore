@@ -1,24 +1,41 @@
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Gradle
+.gradle/
+build/
+.gradletasknamecache
+
+# Android
+*.apk
+*.ap_
+*.aab
+*.dex
+*.class
+bin/
+gen/
+out/
+captures/
 *.iml
-.gradle
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
+.idea/
 .DS_Store
-/build
-/captures
-.externalNativeBuild
-.cxx
 local.properties
 
-# Archivos de firma y credenciales - NO SUBIR
-keystore.properties
-*.jks
-*.keystore
-app/keystore/
-/keystore/
+# Logs
+*.log
+app-logcat.txt
+log-crash.txt
 
-user mongodb.txt
+# Temporal
+*.tmp
+*.bak
+*.swp
+*~
+
+# Android Studio
+.navigation/
+.externalNativeBuild
+.cxx/
+

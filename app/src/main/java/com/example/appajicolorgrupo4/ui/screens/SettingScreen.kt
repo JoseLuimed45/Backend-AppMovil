@@ -19,7 +19,8 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingScreen(
-    mainViewModel: MainViewModel
+    mainViewModel: MainViewModel,
+    onLogoutClick: () -> Unit
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -35,15 +36,15 @@ fun SettingScreen(
             onNotificationsClick = { mainViewModel.navigate(Screen.Notification.route) },
             onCartClick = { mainViewModel.navigate(Screen.Cart.route) },
             onOrderHistoryClick = { mainViewModel.navigate(Screen.OrderHistory.route) },
-            onLogoutClick = { mainViewModel.navigate(Screen.Login.route) }
+            onLogoutClick = onLogoutClick
         ) {
             Scaffold(
                 topBar = {
                     CenterAlignedTopAppBar(
-                        title = { Text("Configuración") },
+                        title = { Text("Configuración", color = MaterialTheme.colorScheme.onSurface) },
                         navigationIcon = {
                             IconButton(onClick = { scope.launch { drawerState.open() } }) {
-                                Icon(Icons.Default.Menu, contentDescription = "Menú")
+                                Icon(Icons.Default.Menu, contentDescription = "Menú", tint = MaterialTheme.colorScheme.onSurface)
                             }
                         },
                         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Color.Transparent)
@@ -62,15 +63,28 @@ fun SettingScreen(
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text("Bienvenido a Configuración")
+                    Text(
+                        "Bienvenido a Configuración",
+                        style = MaterialTheme.typography.titleLarge,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
                     Spacer(Modifier.height(24.dp))
-                    Button(onClick = { mainViewModel.navigate(Screen.Home.route) }) {
+                    Button(
+                        onClick = { mainViewModel.navigate(Screen.Home.route) },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.onPrimary
+                        )
+                    ) {
                         Text("Ir a Inicio")
                     }
                     Spacer(Modifier.height(32.dp))
                     Button(
                         onClick = { mainViewModel.navigate(Screen.Debug.route) },
-                        colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.error,
+                            contentColor = MaterialTheme.colorScheme.onError
+                        )
                     ) {
                         Text("🛠️ Modo Depuración")
                     }

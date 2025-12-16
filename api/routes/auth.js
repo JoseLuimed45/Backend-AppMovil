@@ -15,20 +15,20 @@ router.post('/register', async (req, res) => {
     const { name, email, password } = req.body || {};
 
     if (!name || !email || !password) {
-      return res.status(400).json({ error: 'name, email y password son requeridos' });
+      return res.status(400).json({ message: 'name, email y password son requeridos' });
     }
 
     if (typeof email !== 'string' || !isValidEmail(email)) {
-      return res.status(400).json({ error: 'Debe proporcionar un email válido' });
+      return res.status(400).json({ message: 'Debe proporcionar un email válido' });
     }
 
     if (typeof password !== 'string' || password.length < 6) {
-      return res.status(400).json({ error: 'Password debe tener al menos 6 caracteres' });
+      return res.status(400).json({ message: 'Password debe tener al menos 6 caracteres' });
     }
 
     const exists = await User.findOne({ email: email.toLowerCase() });
     if (exists) {
-      return res.status(409).json({ error: 'El email ya existe' });
+      return res.status(409).json({ message: 'El email ya existe' });
     }
 
     const hashed = await bcrypt.hash(password, 10);
@@ -37,14 +37,21 @@ router.post('/register', async (req, res) => {
     const secret = process.env.JWT_SECRET || 'test-secret';
     const token = jwt.sign({ user_id: user._id.toString(), email: user.email }, secret, { expiresIn: '7d' });
 
-    const safeUser = { _id: user._id, name: user.name, email: user.email, role: user.role, createdAt: user.createdAt };
-
-    return res.status(201).json({ token, user: safeUser });
+    // Respuesta plana que espera la app Android
+    return res.status(201).json({
+      _id: user._id.toString(),
+      nombre: user.name,
+      email: user.email,
+      telefono: user.telefono || '',
+      direccion: user.direccion || '',
+      token: token,
+      rol: user.role || 'user'
+    });
   } catch (err) {
     if (err instanceof mongoose.Error.ValidationError) {
-      return res.status(400).json({ error: 'Datos inválidos' });
+      return res.status(400).json({ message: 'Datos inválidos' });
     }
-    return res.status(500).json({ error: 'Error interno' });
+    return res.status(500).json({ message: 'Error interno' });
   }
 });
 
@@ -53,31 +60,38 @@ router.post('/login', async (req, res) => {
     const { email, password } = req.body || {};
 
     if (!email || !password) {
-      return res.status(400).json({ error: 'email y password son requeridos' });
+      return res.status(400).json({ message: 'email y password son requeridos' });
     }
 
     if (typeof email !== 'string') {
-      return res.status(400).json({ error: 'Debe proporcionar un email válido' });
+      return res.status(400).json({ message: 'Debe proporcionar un email válido' });
     }
 
     const user = await User.findOne({ email: email.toLowerCase() });
     if (!user) {
-      return res.status(404).json({ error: 'Usuario no existe' });
+      return res.status(404).json({ message: 'Usuario no existe' });
     }
 
     const ok = await bcrypt.compare(password, user.password);
     if (!ok) {
-      return res.status(401).json({ error: 'Credenciales incorrectas' });
+      return res.status(401).json({ message: 'Credenciales incorrectas' });
     }
 
     const secret = process.env.JWT_SECRET || 'test-secret';
     const token = jwt.sign({ user_id: user._id.toString(), email: user.email }, secret, { expiresIn: '7d' });
 
-    const safeUser = { _id: user._id, name: user.name, email: user.email, role: user.role, createdAt: user.createdAt };
-
-    return res.status(200).json({ token, user: safeUser });
+    // Respuesta plana que espera la app Android
+    return res.status(200).json({
+      _id: user._id.toString(),
+      nombre: user.name,
+      email: user.email,
+      telefono: user.telefono || '',
+      direccion: user.direccion || '',
+      token: token,
+      rol: user.role || 'user'
+    });
   } catch (err) {
-    return res.status(500).json({ error: 'Error interno' });
+    return res.status(500).json({ message: 'Error interno' });
   }
 });
 

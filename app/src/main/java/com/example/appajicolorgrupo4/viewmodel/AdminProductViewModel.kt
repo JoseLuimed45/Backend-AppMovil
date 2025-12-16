@@ -1,6 +1,5 @@
 package com.example.appajicolorgrupo4.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.appajicolorgrupo4.data.models.Product
@@ -31,6 +30,14 @@ class AdminProductViewModel(
     private val _successMessage = MutableStateFlow<String?>(null)
     val successMessage: StateFlow<String?> = _successMessage.asStateFlow()
 
+    private fun log(message: String) {
+        try {
+            android.util.Log.d("AdminProductVM", message)
+        } catch (e: RuntimeException) {
+            println("AdminProductVM: $message")
+        }
+    }
+
     init {
         cargarProductos()
     }
@@ -46,11 +53,11 @@ class AdminProductViewModel(
             when (val result = repository.getProducts()) {
                 is NetworkResult.Success -> {
                     _productos.value = result.data ?: emptyList()
-                    Log.d("AdminProductVM", "Productos cargados: ${_productos.value.size}")
+                    log("Productos cargados: ${_productos.value.size}")
                 }
                 is NetworkResult.Error -> {
                     _error.value = result.message ?: "Error al cargar productos"
-                    Log.e("AdminProductVM", "Error: ${result.message}")
+                    log("Error: ${result.message}")
                 }
                 is NetworkResult.Loading -> {
                     // Ya está en loading
@@ -72,7 +79,7 @@ class AdminProductViewModel(
         stock: Int,
         imageFile: File? = null
     ) {
-        Log.d("AdminProductVM", "crearProducto llamado con: nombre='$nombre', desc='$descripcion', precio=$precio, cat='$categoria', stock=$stock")
+        log("crearProducto llamado con: nombre='$nombre', desc='$descripcion', precio=$precio, cat='$categoria', stock=$stock")
         viewModelScope.launch {
             _isLoading.value = true
             _error.value = null
@@ -83,11 +90,11 @@ class AdminProductViewModel(
                 is NetworkResult.Success -> {
                     _successMessage.value = "Producto creado exitosamente"
                     cargarProductos() // Recargar lista
-                    Log.d("AdminProductVM", "Producto creado: ${result.data?.nombre}")
+                    log("Producto creado: ${result.data?.nombre}")
                 }
                 is NetworkResult.Error -> {
                     _error.value = result.message ?: "Error al crear producto"
-                    Log.e("AdminProductVM", "Error al crear: ${result.message}")
+                    log("Error al crear: ${result.message}")
                 }
                 is NetworkResult.Loading -> {
                     // Ya está en loading
@@ -120,11 +127,11 @@ class AdminProductViewModel(
                 is NetworkResult.Success -> {
                     _successMessage.value = "Producto actualizado exitosamente"
                     cargarProductos() // Recargar lista
-                    Log.d("AdminProductVM", "Producto actualizado: ${result.data?.nombre}")
+                    log("Producto actualizado: ${result.data?.nombre}")
                 }
                 is NetworkResult.Error -> {
                     _error.value = result.message ?: "Error al actualizar producto"
-                    Log.e("AdminProductVM", "Error al actualizar: ${result.message}")
+                    log("Error al actualizar: ${result.message}")
                 }
                 is NetworkResult.Loading -> {
                     // Ya está en loading
@@ -142,7 +149,7 @@ class AdminProductViewModel(
         // Validación defensiva: no hacer nada si el ID es nulo o está en blanco.
         if (id.isNullOrBlank()) {
             _error.value = "ID de producto inválido para eliminar."
-            Log.w("AdminProductVM", "Se intentó eliminar un producto con ID nulo o vacío.")
+            log("Se intentó eliminar un producto con ID nulo o vacío.")
             return
         }
 
@@ -154,11 +161,11 @@ class AdminProductViewModel(
                 is NetworkResult.Success -> {
                     _successMessage.value = "Producto eliminado exitosamente"
                     cargarProductos() // Recargar lista
-                    Log.d("AdminProductVM", "Producto eliminado: $id")
+                    log("Producto eliminado: $id")
                 }
                 is NetworkResult.Error -> {
                     _error.value = result.message ?: "Error al eliminar producto"
-                    Log.e("AdminProductVM", "Error al eliminar: ${result.message}")
+                    log("Error al eliminar: ${result.message}")
                 }
                 is NetworkResult.Loading -> {
                     // Ya está en loading

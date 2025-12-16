@@ -21,9 +21,6 @@ import com.example.appajicolorgrupo4.data.repository.ProductRepository
 import com.example.appajicolorgrupo4.data.session.SessionManager
 import com.example.appajicolorgrupo4.navigation.Screen
 import com.example.appajicolorgrupo4.ui.components.AppBackground
-import com.example.appajicolorgrupo4.ui.theme.AmarilloAji
-import com.example.appajicolorgrupo4.ui.theme.MoradoAji
-import com.example.appajicolorgrupo4.ui.theme.MoradoAjiOscuro
 import com.example.appajicolorgrupo4.viewmodel.AdminProductViewModel
 import com.example.appajicolorgrupo4.viewmodel.AdminProductViewModelFactory
 import com.example.appajicolorgrupo4.viewmodel.MainViewModel
@@ -80,29 +77,29 @@ fun AdminProductosScreen(
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text("Administración de Productos", color = AmarilloAji) },
+                    title = { Text("Administración de Productos", color = MaterialTheme.colorScheme.onPrimary) },
                     actions = {
-                        IconButton(onClick = { mainViewModel.navigate(Screen.AdminPedidos.route) }) { // CORREGIDO
-                            Icon(Icons.Default.ShoppingCart, "Ver Pedidos", tint = AmarilloAji)
+                        IconButton(onClick = { mainViewModel.navigate(Screen.AdminPedidos.route) }) {
+                            Icon(Icons.Default.ShoppingCart, "Ver Pedidos", tint = MaterialTheme.colorScheme.onPrimary)
                         }
-                        IconButton(onClick = { mainViewModel.navigate(Screen.AdminUsuarios.route) }) { // CORREGIDO
-                            Icon(Icons.Default.Person, "Ver Usuarios", tint = AmarilloAji)
+                        IconButton(onClick = { mainViewModel.navigate(Screen.AdminUsuarios.route) }) {
+                            Icon(Icons.Default.Person, "Ver Usuarios", tint = MaterialTheme.colorScheme.onPrimary)
                         }
                         IconButton(onClick = { viewModel.cargarProductos() }) {
-                            Icon(Icons.Default.Refresh, "Recargar", tint = AmarilloAji)
+                            Icon(Icons.Default.Refresh, "Recargar", tint = MaterialTheme.colorScheme.onPrimary)
                         }
                     },
                     colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = MoradoAji,
-                        titleContentColor = AmarilloAji
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        titleContentColor = MaterialTheme.colorScheme.onPrimary
                     )
                 )
             },
             floatingActionButton = {
                 FloatingActionButton(
                     onClick = { showAddDialog = true },
-                    containerColor = AmarilloAji,
-                    contentColor = MoradoAji
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary
                 ) { Icon(Icons.Default.Add, "Agregar Producto") }
             },
             snackbarHost = { SnackbarHost(snackbarHostState) },
