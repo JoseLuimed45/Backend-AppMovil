@@ -54,13 +54,13 @@ abstract class AppDatabase : RoomDatabase() {
                                     UserEntity(
                                         nombre = "Admin",
                                         correo = "admin@ajicolor.cl",
-                                        telefono = "",
+                                        telefono = "123456789",
                                         direccion = "Santiago, Chile"
                                     ),
                                     UserEntity(
                                         nombre = "Juan Pérez",
                                         correo = "juan@ajicolor.cl",
-                                        telefono = "",
+                                        telefono = "987654321",
                                         direccion = "Valparaíso, Chile"
                                     )
                                 )

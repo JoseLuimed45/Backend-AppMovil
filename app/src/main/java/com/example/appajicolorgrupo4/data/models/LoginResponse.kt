@@ -8,7 +8,7 @@ import com.google.gson.annotations.SerializedName
  */
 data class LoginResponse(
     @SerializedName("_id") val id: String? = null,
-    val nombre: String?, // CORREGIDO: Hecho nullable para aceptar respuestas sin este campo
+    val nombre: String?, // Hecho nullable para aceptar respuestas sin este campo
     val email: String,
     val telefono: String? = "",
     val direccion: String? = "",
@@ -17,13 +17,14 @@ data class LoginResponse(
 ) {
     /** 
      * Convierte la respuesta de login a UserEntity. 
-     * Si el nombre es nulo o está vacío, usa el email como fallback.
+     * Si el nombre es nulo o está vacío, usa la parte del email antes del '@' como fallback.
      */
     fun toUserEntity(): UserEntity {
+        val nombreDeRespaldo = email.split('@').firstOrNull() ?: "Usuario"
         return UserEntity(
             id = 1L, // ID local para Room (no se usa en backend)
             mongoId = id, // ObjectId de MongoDB (_id del backend)
-            nombre = if (nombre.isNullOrBlank()) email else nombre,
+            nombre = if (nombre.isNullOrBlank()) nombreDeRespaldo else nombre,
             correo = email,
             telefono = telefono ?: "",
             direccion = direccion ?: ""

@@ -37,8 +37,8 @@ fun HomeScreenCompact() { // Implementación de la pantalla de inicio para panta
         },
         bottomBar = {
             BottomNavigationBar(
-                navController = navController,
-                currentRoute = Screen.Home.route
+            currentRoute = Screen.Home.route,
+            onNavigate = { route -> navController.navigate(route) }
             )
         }
     ) { innerPadding ->

@@ -27,23 +27,15 @@ fun RegistroScreen(
     authViewModel: AuthViewModel
 ) {
     val registerState by authViewModel.register.collectAsState()
-
     var showPassword by remember { mutableStateOf(false) }
-    var showPasswordConfirmation by remember { mutableStateOf(false) }
+    var showConfirmPassword by remember { mutableStateOf(false) }
 
-    // La navegación de éxito ahora está en el AuthViewModel, por lo que el LaunchedEffect se elimina.
-
-    // Diálogo de error
-    registerState.errorMsg?.let { errorMsg ->
+    registerState.errorMsg?.let {
         AlertDialog(
             onDismissRequest = { authViewModel.clearRegisterResult() },
             title = { Text("Error de Registro") },
-            text = { Text(errorMsg) },
-            confirmButton = {
-                Button(onClick = { authViewModel.clearRegisterResult() }) {
-                    Text("Entendido")
-                }
-            }
+            text = { Text(it) },
+            confirmButton = { Button(onClick = { authViewModel.clearRegisterResult() }) { Text("OK") } }
         )
     }
 
@@ -53,105 +45,85 @@ fun RegistroScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Text(
-                text = "Crear Cuenta",
-                style = MaterialTheme.typography.headlineLarge,
-                color = AmarilloAji
-            )
+            Text("Crear Cuenta", style = MaterialTheme.typography.headlineLarge, color = AmarilloAji)
             Spacer(Modifier.height(16.dp))
 
-            // Campos de texto (sin cambios)
             OutlinedTextField(
                 value = registerState.nombre,
-                onValueChange = { authViewModel.onNameChange(it) },
+                onValueChange = authViewModel::onNameChange,
                 label = { Text("Nombre Completo", color = MoradoAji) },
                 modifier = Modifier.fillMaxWidth(),
                 isError = registerState.nombreError != null,
-                supportingText = { registerState.nombreError?.let { Text(it, color = MaterialTheme.colorScheme.error) } },
-                colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = AmarilloAji, unfocusedBorderColor = AmarilloAji, focusedLabelColor = MoradoAji, unfocusedLabelColor = MoradoAji, cursorColor = AmarilloAji, focusedTextColor = MoradoAji, unfocusedTextColor = MoradoAji, focusedContainerColor = Color.White, unfocusedContainerColor = Color.White)
+                supportingText = { registerState.nombreError?.let { Text(it, color = Color.Red) } }
             )
             Spacer(Modifier.height(8.dp))
 
             OutlinedTextField(
                 value = registerState.correo,
-                onValueChange = { authViewModel.onRegisterEmailChange(it) },
+                onValueChange = authViewModel::onRegisterEmailChange,
                 label = { Text("Correo Electrónico", color = MoradoAji) },
                 modifier = Modifier.fillMaxWidth(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                 isError = registerState.correoError != null,
-                supportingText = { registerState.correoError?.let { Text(it, color = MaterialTheme.colorScheme.error) } },
-                colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = AmarilloAji, unfocusedBorderColor = AmarilloAji, focusedLabelColor = MoradoAji, unfocusedLabelColor = MoradoAji, cursorColor = AmarilloAji, focusedTextColor = MoradoAji, unfocusedTextColor = MoradoAji, focusedContainerColor = Color.White, unfocusedContainerColor = Color.White)
+                supportingText = { registerState.correoError?.let { Text(it, color = Color.Red) } }
             )
             Spacer(Modifier.height(8.dp))
 
             OutlinedTextField(
                 value = registerState.telefono,
-                onValueChange = { authViewModel.onTelefonoChange(it) },
+                onValueChange = authViewModel::onTelefonoChange,
                 label = { Text("Teléfono", color = MoradoAji) },
                 modifier = Modifier.fillMaxWidth(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
-                isError = registerState.telefonoError != null,
-                supportingText = { registerState.telefonoError?.let { Text(it, color = MaterialTheme.colorScheme.error) } },
-                colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = AmarilloAji, unfocusedBorderColor = AmarilloAji, focusedLabelColor = MoradoAji, unfocusedLabelColor = MoradoAji, cursorColor = AmarilloAji, focusedTextColor = MoradoAji, unfocusedTextColor = MoradoAji, focusedContainerColor = Color.White, unfocusedContainerColor = Color.White)
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone)
             )
             Spacer(Modifier.height(8.dp))
 
             OutlinedTextField(
                 value = registerState.direccion,
-                onValueChange = { authViewModel.onDireccionChange(it) },
+                onValueChange = authViewModel::onDireccionChange,
                 label = { Text("Dirección", color = MoradoAji) },
-                modifier = Modifier.fillMaxWidth(),
-                isError = registerState.direccionError != null,
-                supportingText = { registerState.direccionError?.let { Text(it, color = MaterialTheme.colorScheme.error) } },
-                colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = AmarilloAji, unfocusedBorderColor = AmarilloAji, focusedLabelColor = MoradoAji, unfocusedLabelColor = MoradoAji, cursorColor = AmarilloAji, focusedTextColor = MoradoAji, unfocusedTextColor = MoradoAji, focusedContainerColor = Color.White, unfocusedContainerColor = Color.White)
+                modifier = Modifier.fillMaxWidth()
             )
             Spacer(Modifier.height(8.dp))
 
             OutlinedTextField(
                 value = registerState.clave,
-                onValueChange = { authViewModel.onRegisterPassChange(it) },
+                onValueChange = authViewModel::onRegisterPassChange,
                 label = { Text("Contraseña", color = MoradoAji) },
                 modifier = Modifier.fillMaxWidth(),
                 visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                trailingIcon = { IconButton(onClick = { showPassword = !showPassword }) { Icon(imageVector = if (showPassword) Icons.Default.Visibility else Icons.Default.VisibilityOff, contentDescription = null) } },
+                trailingIcon = { IconButton(onClick = { showPassword = !showPassword }) { Icon(if (showPassword) Icons.Default.Visibility else Icons.Default.VisibilityOff, null) } },
                 isError = registerState.claveError != null,
-                supportingText = { registerState.claveError?.let { Text(it, color = MaterialTheme.colorScheme.error) } },
-                colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = AmarilloAji, unfocusedBorderColor = AmarilloAji, focusedLabelColor = MoradoAji, unfocusedLabelColor = MoradoAji, cursorColor = AmarilloAji, focusedTextColor = MoradoAji, unfocusedTextColor = MoradoAji, focusedContainerColor = Color.White, unfocusedContainerColor = Color.White)
+                supportingText = { registerState.claveError?.let { Text(it, color = Color.Red) } }
             )
             Spacer(Modifier.height(8.dp))
 
             OutlinedTextField(
                 value = registerState.confirm,
-                onValueChange = { authViewModel.onConfirmChange(it) },
+                onValueChange = authViewModel::onConfirmChange,
                 label = { Text("Confirmar Contraseña", color = MoradoAji) },
                 modifier = Modifier.fillMaxWidth(),
-                visualTransformation = if (showPasswordConfirmation) VisualTransformation.None else PasswordVisualTransformation(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                trailingIcon = { IconButton(onClick = { showPasswordConfirmation = !showPasswordConfirmation }) { Icon(imageVector = if (showPasswordConfirmation) Icons.Default.Visibility else Icons.Default.VisibilityOff, contentDescription = null) } },
+                visualTransformation = if (showConfirmPassword) VisualTransformation.None else PasswordVisualTransformation(),
+                trailingIcon = { IconButton(onClick = { showConfirmPassword = !showConfirmPassword }) { Icon(if (showConfirmPassword) Icons.Default.Visibility else Icons.Default.VisibilityOff, null) } },
                 isError = registerState.confirmError != null,
-                supportingText = { registerState.confirmError?.let { Text(it, color = MaterialTheme.colorScheme.error) } },
-                colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = AmarilloAji, unfocusedBorderColor = AmarilloAji, focusedLabelColor = MoradoAji, unfocusedLabelColor = MoradoAji, cursorColor = AmarilloAji, focusedTextColor = MoradoAji, unfocusedTextColor = MoradoAji, focusedContainerColor = Color.White, unfocusedContainerColor = Color.White)
+                supportingText = { registerState.confirmError?.let { Text(it, color = Color.Red) } }
             )
-
             Spacer(Modifier.height(16.dp))
 
             Button(
                 onClick = { authViewModel.submitRegister() },
                 modifier = Modifier.fillMaxWidth(),
-                enabled = registerState.canSubmit && !registerState.isSubmitting,
-                colors = ButtonDefaults.buttonColors(containerColor = AmarilloAji, contentColor = MoradoAji, disabledContainerColor = AmarilloAji.copy(alpha = 0.5f))
+                enabled = registerState.canSubmit && !registerState.isSubmitting
             ) {
                 if (registerState.isSubmitting) {
-                    CircularProgressIndicator(modifier = Modifier.size(20.dp), color = MoradoAji, strokeWidth = 2.dp)
+                    CircularProgressIndicator(modifier = Modifier.size(20.dp))
                 } else {
                     Text("Registrarse")
                 }
             }
-
             Spacer(Modifier.height(8.dp))
 
-            TextButton(onClick = { mainViewModel.navigate(Screen.Login) }) {
+            TextButton(onClick = { mainViewModel.navigate(Screen.Login.route) }) {
                 Text("¿Ya tienes cuenta? Inicia Sesión", color = AmarilloAji)
             }
         }

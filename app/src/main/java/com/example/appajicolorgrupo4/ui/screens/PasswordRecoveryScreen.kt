@@ -11,7 +11,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -21,11 +20,9 @@ import androidx.compose.ui.unit.dp
 import com.example.appajicolorgrupo4.R
 import com.example.appajicolorgrupo4.ui.components.AppBackground
 import com.example.appajicolorgrupo4.ui.theme.AmarilloAji
-import com.example.appajicolorgrupo4.ui.theme.MoradoAji
 import com.example.appajicolorgrupo4.viewmodel.AuthViewModel
 import com.example.appajicolorgrupo4.viewmodel.MainViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PasswordRecoveryScreen(
     mainViewModel: MainViewModel,
@@ -33,16 +30,14 @@ fun PasswordRecoveryScreen(
 ) {
     val recoverState by authViewModel.recoverState.collectAsState()
     val resetState by authViewModel.resetState.collectAsState()
-
     var currentStep by remember { mutableIntStateOf(1) }
     var showPassword by remember { mutableStateOf(false) }
     var showConfirmPassword by remember { mutableStateOf(false) }
 
-    // Efecto para avanzar al siguiente paso cuando el código se solicita con éxito
     LaunchedEffect(recoverState.success) {
         if (recoverState.success) {
             currentStep = 2
-            authViewModel.clearRecoverResult() // Limpia flags, pero mantiene el email
+            authViewModel.clearRecoverResult()
         }
     }
 
@@ -53,7 +48,6 @@ fun PasswordRecoveryScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             if (currentStep == 1) {
-                // --- PASO 1: SOLICITAR CÓDIGO ---
                 Image(painter = painterResource(id = R.drawable.recovery), "...", Modifier.size(150.dp))
                 Spacer(Modifier.height(24.dp))
                 Text("Recuperar Contraseña", style = MaterialTheme.typography.headlineMedium, color = AmarilloAji)
@@ -68,10 +62,7 @@ fun PasswordRecoveryScreen(
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
                     isError = recoverState.emailError != null,
-                    supportingText = { recoverState.emailError?.let { Text(it) } },
-                    colors = OutlinedTextFieldDefaults.colors(
-                        // ... (colores)
-                    )
+                    supportingText = { recoverState.emailError?.let { Text(it, color = Color.Red) } }
                 )
 
                 recoverState.error?.let { Text(it, color = Color.Red, modifier = Modifier.padding(top = 8.dp)) }
@@ -89,7 +80,6 @@ fun PasswordRecoveryScreen(
                 }
 
             } else {
-                // --- PASO 2: RESTABLECER CONTRASEÑA ---
                 Image(painter = painterResource(id = R.drawable.envio_correo), "...", Modifier.size(120.dp))
                 Spacer(Modifier.height(24.dp))
                 Text("Restablecer Contraseña", style = MaterialTheme.typography.headlineMedium, color = AmarilloAji)
@@ -99,22 +89,29 @@ fun PasswordRecoveryScreen(
                 OutlinedTextField(
                     value = resetState.code,
                     onValueChange = authViewModel::onResetCodeChange,
-                    label = { Text("Código de 6 dígitos") },
-                    // ... (resto de las propiedades)
+                    label = { Text("Código de 6 dígitos") }
                 )
                 Spacer(Modifier.height(12.dp))
+
                 OutlinedTextField(
                     value = resetState.newPassword,
                     onValueChange = authViewModel::onResetPassChange,
                     label = { Text("Nueva Contraseña") },
-                    // ... (resto de las propiedades)
+                    visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
+                    trailingIcon = { IconButton(onClick = { showPassword = !showPassword }) { Icon(if (showPassword) Icons.Default.Visibility else Icons.Default.VisibilityOff, null) } },
+                    isError = resetState.passError != null,
+                    supportingText = { resetState.passError?.let { Text(it, color = Color.Red) } }
                 )
                 Spacer(Modifier.height(12.dp))
+
                 OutlinedTextField(
                     value = resetState.confirmPassword,
                     onValueChange = authViewModel::onResetConfirmChange,
                     label = { Text("Confirmar Contraseña") },
-                    // ... (resto de las propiedades)
+                    visualTransformation = if (showConfirmPassword) VisualTransformation.None else PasswordVisualTransformation(),
+                    trailingIcon = { IconButton(onClick = { showConfirmPassword = !showConfirmPassword }) { Icon(if (showConfirmPassword) Icons.Default.Visibility else Icons.Default.VisibilityOff, null) } },
+                    isError = resetState.confirmError != null,
+                    supportingText = { resetState.confirmError?.let { Text(it, color = Color.Red) } }
                 )
 
                 resetState.error?.let { Text(it, color = Color.Red, modifier = Modifier.padding(top = 8.dp)) }
@@ -126,7 +123,7 @@ fun PasswordRecoveryScreen(
                 
                 Spacer(Modifier.height(8.dp))
 
-                TextButton(onClick = { currentStep = 1 }) {
+                TextButton(onClick = { currentStep = 1; authViewModel.clearResetState() }) {
                     Text("Volver")
                 }
             }

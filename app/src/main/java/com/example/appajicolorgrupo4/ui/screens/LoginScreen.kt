@@ -26,20 +26,15 @@ import com.example.appajicolorgrupo4.viewmodel.MainViewModel
 
 @Composable
 fun LoginScreen(
-    authViewModel: AuthViewModel, // Recibe el ViewModel de autenticación
-    mainViewModel: MainViewModel  // Recibe el ViewModel de navegación
+    authViewModel: AuthViewModel,
+    mainViewModel: MainViewModel
 ) {
     val estado by authViewModel.login.collectAsState()
     var showPassword by remember { mutableStateOf(false) }
 
-    // La navegación ahora se maneja completamente dentro de AuthViewModel.
-    // Ya no se necesita el LaunchedEffect aquí.
-
     AppBackground {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(24.dp),
+            modifier = Modifier.fillMaxSize().padding(24.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -53,134 +48,65 @@ fun LoginScreen(
             )
             Spacer(Modifier.height(24.dp))
 
-            // Campo Email
             OutlinedTextField(
                 value = estado.correo,
                 onValueChange = authViewModel::onLoginEmailChange,
-                label = { Text("Email", color = MoradoAji, fontWeight = FontWeight.Bold) },
-                placeholder = { Text("Ingrese su email", color = MoradoAji.copy(alpha = 0.7f)) },
+                label = { Text("Email", color = MoradoAji) },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                 modifier = Modifier.fillMaxWidth(),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = AmarilloAji,
-                    unfocusedBorderColor = AmarilloAji,
-                    focusedLabelColor = MoradoAji,
-                    unfocusedLabelColor = MoradoAji,
-                    cursorColor = AmarilloAji,
-                    focusedTextColor = MoradoAji,
-                    unfocusedTextColor = MoradoAji,
-                    focusedContainerColor = Color.White,
-                    unfocusedContainerColor = Color.White
-                ),
                 isError = estado.correoError != null,
-                supportingText = {
-                    estado.correoError?.let {
-                        Text(it, color = AmarilloAji)
-                    }
-                }
+                supportingText = { estado.correoError?.let { Text(it, color = Color.Red) } }
             )
 
             Spacer(Modifier.height(12.dp))
 
-            // Campo Password
             OutlinedTextField(
                 value = estado.clave,
                 onValueChange = authViewModel::onLoginPassChange,
-                label = { Text("Contraseña", color = MoradoAji, fontWeight = FontWeight.Bold) },
-                placeholder = { Text("Ingrese su contraseña", color = MoradoAji.copy(alpha = 0.7f)) },
+                label = { Text("Contraseña", color = MoradoAji) },
                 singleLine = true,
                 visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
                 trailingIcon = {
                     IconButton(onClick = { showPassword = !showPassword }) {
-                        Icon(
-                            imageVector = if (showPassword) Icons.Filled.Visibility else Icons.Filled.VisibilityOff,
-                            contentDescription = if (showPassword) "Ocultar contraseña" else "Mostrar contraseña",
-                            tint = AmarilloAji
-                        )
+                        Icon(if (showPassword) Icons.Default.Visibility else Icons.Default.VisibilityOff, null)
                     }
                 },
-                modifier = Modifier.fillMaxWidth(),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = AmarilloAji,
-                    unfocusedBorderColor = AmarilloAji,
-                    focusedLabelColor = MoradoAji,
-                    unfocusedLabelColor = MoradoAji,
-                    cursorColor = AmarilloAji,
-                    focusedTextColor = MoradoAji,
-                    unfocusedTextColor = MoradoAji,
-                    focusedContainerColor = Color.White,
-                    unfocusedContainerColor = Color.White
-                )
+                modifier = Modifier.fillMaxWidth()
             )
 
             Spacer(Modifier.height(16.dp))
 
-            // Mostrar error de login
-            estado.errorMsg?.let { error ->
-                Text(
-                    text = error,
-                    color = AmarilloAji,
-                    style = MaterialTheme.typography.bodyMedium.copy(
-                        fontWeight = FontWeight.Bold,
-                        shadow = Shadow(color = Color.Black.copy(alpha = 0.3f), blurRadius = 2f)
-                    )
-                )
+            estado.errorMsg?.let {
+                Text(it, color = Color.Red, style = MaterialTheme.typography.bodyMedium)
                 Spacer(Modifier.height(8.dp))
             }
 
-            // Botón Entrar
             Button(
                 onClick = authViewModel::submitLogin,
                 modifier = Modifier.fillMaxWidth(),
-                enabled = estado.canSubmit && !estado.isSubmitting,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = AmarilloAji,
-                    contentColor = MoradoAji,
-                    disabledContainerColor = AmarilloAji.copy(alpha = 0.5f),
-                    disabledContentColor = MoradoAji.copy(alpha = 0.5f)
-                ),
-                border = BorderStroke(2.dp, MoradoAji)
+                enabled = estado.canSubmit && !estado.isSubmitting
             ) {
                 if (estado.isSubmitting) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(20.dp),
-                        color = MoradoAji,
-                        strokeWidth = 2.dp
-                    )
-                    Spacer(Modifier.width(8.dp))
-                    Text("Validando...", fontWeight = FontWeight.Bold)
+                    CircularProgressIndicator(modifier = Modifier.size(20.dp))
                 } else {
-                    Text("Entrar", fontWeight = FontWeight.ExtraBold)
+                    Text("Entrar")
                 }
             }
 
             Spacer(Modifier.height(12.dp))
 
-            // Botón Ir a Registro
             OutlinedButton(
-                onClick = { mainViewModel.navigate(Screen.Registro) },
-                modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.outlinedButtonColors(
-                    containerColor = AmarilloAji,
-                    contentColor = MoradoAji
-                ),
-                border = BorderStroke(1.dp, MoradoAji)
+                onClick = { mainViewModel.navigate(Screen.Registro.route) },
+                modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Crear cuenta", fontWeight = FontWeight.Bold)
+                Text("Crear cuenta")
             }
 
             Spacer(Modifier.height(12.dp))
 
-            // Botón Recuperar Contraseña
-            TextButton(
-                onClick = { mainViewModel.navigate(Screen.PasswordRecovery) },
-                modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.textButtonColors(
-                    contentColor = AmarilloAji
-                )
-            ) {
-                Text("Recuperar contraseña", fontWeight = FontWeight.Bold)
+            TextButton(onClick = { mainViewModel.navigate(Screen.PasswordRecovery.route) }) {
+                Text("Recuperar contraseña")
             }
         }
     }

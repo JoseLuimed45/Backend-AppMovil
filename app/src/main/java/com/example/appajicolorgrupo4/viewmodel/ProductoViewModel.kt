@@ -1,86 +1,106 @@
 package com.example.appajicolorgrupo4.viewmodel
 
 import androidx.lifecycle.ViewModel
-import com.example.appajicolorgrupo4.data.Producto
-import com.example.appajicolorgrupo4.data.ProductoResena
+import com.example.appajicolorgrupo4.data.*
+import com.example.appajicolorgrupo4.navigation.Screen
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 
-/**
- * ViewModel para gestionar productos y sus reseñas
- */
-class ProductoViewModel : ViewModel() {
+data class CatalogoUiState(
+    val productos: List<Producto> = emptyList(),
+    val searchQuery: String = "",
+    val categoriaFiltro: CategoriaProducto? = null,
+    val isSearchActive: Boolean = false
+)
 
-    private val _productos = MutableStateFlow<List<Producto>>(emptyList())
-    val productos: StateFlow<List<Producto>> = _productos.asStateFlow()
+data class DetalleProductoUiState(
+    val producto: Producto? = null,
+    val cantidad: Int = 1,
+    val tallaSeleccionada: Talla? = null,
+    val colorSeleccionado: ColorInfo? = null,
+    val showSnackbar: Boolean = false
+)
 
-    private val _resenas = MutableStateFlow<Map<String, List<ProductoResena>>>(emptyMap())
-    val resenas: StateFlow<Map<String, List<ProductoResena>>> = _resenas.asStateFlow()
+class ProductoViewModel(private val mainViewModel: MainViewModel) : ViewModel() {
 
-    /**
-     * Carga los productos (en producción vendría de una API o BD)
-     */
-    fun cargarProductos(listaProductos: List<Producto>) {
-        _productos.value = listaProductos
+    private val _allProductos = CatalogoProductos.obtenerTodos()
+    private val _catalogoState = MutableStateFlow(CatalogoUiState(productos = _allProductos))
+    val catalogoState: StateFlow<CatalogoUiState> = _catalogoState.asStateFlow()
+
+    private val _detalleState = MutableStateFlow(DetalleProductoUiState())
+    val detalleState: StateFlow<DetalleProductoUiState> = _detalleState.asStateFlow()
+
+    // --- Lógica de Catálogo ---
+    fun onQueryChange(query: String) {
+        _catalogoState.update { it.copy(searchQuery = query) }
+        filterProducts()
     }
 
-    /**
-     * Obtiene un producto por su ID
-     */
-    fun obtenerProducto(id: String): Producto? {
-        return _productos.value.find { it.id == id }
+    fun onCategoriaChange(categoria: CategoriaProducto?) {
+        _catalogoState.update { it.copy(categoriaFiltro = categoria) }
+        filterProducts()
     }
 
-    /**
-     * Obtiene las reseñas de un producto
-     */
-    fun obtenerResenas(productoId: String): List<ProductoResena> {
-        return _resenas.value[productoId] ?: emptyList()
+    fun onSearchActiveChange(isActive: Boolean) {
+        _catalogoState.update { it.copy(isSearchActive = isActive) }
+        if (!isActive) onQueryChange("")
     }
 
-    /**
-     * Agrega una nueva reseña a un producto
-     */
-    fun agregarResena(resena: ProductoResena) {
-        val resenasActuales = _resenas.value.toMutableMap()
-        val resenasProducto = resenasActuales[resena.productoId]?.toMutableList() ?: mutableListOf()
-        resenasProducto.add(0, resena) // Agregar al inicio
-        resenasActuales[resena.productoId] = resenasProducto
-        _resenas.value = resenasActuales
-
-        // Actualizar calificación promedio del producto
-        actualizarCalificacionProducto(resena.productoId)
+    private fun filterProducts() {
+        val state = _catalogoState.value
+        val filtered = _allProductos.filter { producto ->
+            val matchesCategory = state.categoriaFiltro == null || producto.categoria == state.categoriaFiltro
+            val matchesQuery = state.searchQuery.isBlank() ||
+                               producto.nombre.contains(state.searchQuery, true) ||
+                               producto.descripcion.contains(state.searchQuery, true)
+            matchesCategory && matchesQuery
+        }
+        _catalogoState.update { it.copy(productos = filtered) }
     }
 
-    /**
-     * Actualiza la calificación promedio de un producto
-     */
-    private fun actualizarCalificacionProducto(productoId: String) {
-        val resenasProducto = obtenerResenas(productoId)
-        if (resenasProducto.isEmpty()) return
+    // --- Lógica de Detalle ---
+    fun onProductoSelected(productoId: String) {
+        val producto = _allProductos.find { it.id == productoId }
+        _detalleState.value = DetalleProductoUiState(producto = producto)
+    }
 
-        val promedio = resenasProducto.map { it.calificacion }.average().toFloat()
-
-        _productos.value = _productos.value.map { producto ->
-            if (producto.id == productoId) {
-                producto.copy(
-                    calificacionPromedio = promedio,
-                    numeroResenas = resenasProducto.size
-                )
-            } else {
-                producto
-            }
+    fun onCantidadChange(cantidad: Int) {
+        val stock = _detalleState.value.producto?.stock ?: 0
+        if (cantidad in 1..stock) {
+            _detalleState.update { it.copy(cantidad = cantidad) }
         }
     }
 
-    /**
-     * Calcula el promedio de calificaciones de un producto
-     */
-    fun calcularPromedioCalificacion(productoId: String): Float {
-        val resenasProducto = obtenerResenas(productoId)
-        if (resenasProducto.isEmpty()) return 0f
-        return resenasProducto.map { it.calificacion }.average().toFloat()
+    fun onTallaChange(talla: Talla) {
+        _detalleState.update { it.copy(tallaSeleccionada = talla) }
+    }
+
+    fun onColorChange(color: ColorInfo) {
+        _detalleState.update { it.copy(colorSeleccionado = color) }
+    }
+
+    fun onAddToCart(carritoViewModel: CarritoViewModel) {
+        val state = _detalleState.value
+        val producto = state.producto ?: return
+
+        val configuracion = ProductoConfiguracion(producto, state.tallaSeleccionada, state.colorSeleccionado, state.cantidad)
+        if (configuracion.esValida()) {
+            carritoViewModel.agregarProducto(configuracion.toProductoCarrito())
+            _detalleState.update { it.copy(showSnackbar = true) }
+        }
+    }
+
+    fun onSnackbarDismissed() {
+        _detalleState.update { it.copy(showSnackbar = false) }
+    }
+
+    fun onViewCart() {
+        mainViewModel.navigate(Screen.Cart.route)
+    }
+
+    fun onProductoClicked(producto: Producto) {
+        mainViewModel.navigate(Screen.DetalleProducto.createRoute(producto.id))
     }
 }
-

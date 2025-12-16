@@ -1,12 +1,12 @@
 package com.example.appajicolorgrupo4.viewmodel
 
+import androidx.compose.ui.geometry.isEmpty
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.appajicolorgrupo4.data.EstadoPedido
 import com.example.appajicolorgrupo4.data.GeneradorNumeroPedido
 import com.example.appajicolorgrupo4.data.MetodoPago
 import com.example.appajicolorgrupo4.data.PedidoCompleto
-import com.example.appajicolorgrupo4.data.remote.RetrofitInstance
 import com.example.appajicolorgrupo4.data.repository.RemotePedidoRepository
 import com.example.appajicolorgrupo4.navigation.Screen
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,17 +15,14 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class PedidosViewModel(
-    private val pedidoRepository: RemotePedidoRepository = RemotePedidoRepository(RetrofitInstance.api),
     private val mainViewModel: MainViewModel,
     private val carritoViewModel: CarritoViewModel,
-    private val usuarioViewModel: UsuarioViewModel
+    private val usuarioViewModel: UsuarioViewModel,
+    private val pedidoRepository: RemotePedidoRepository
 ) : ViewModel() {
 
     private val _pedidos = MutableStateFlow<List<PedidoCompleto>>(emptyList())
     val pedidos: StateFlow<List<PedidoCompleto>> = _pedidos.asStateFlow()
-
-    private val _ultimoPedidoGuardado = MutableStateFlow<String?>(null)
-    val ultimoPedidoGuardado: StateFlow<String?> = _ultimoPedidoGuardado.asStateFlow()
 
     fun confirmarCompraFicticia(
         metodoPago: MetodoPago,
@@ -34,16 +31,18 @@ class PedidosViewModel(
         notasAdicionales: String
     ) {
         viewModelScope.launch {
-            val user = usuarioViewModel.currentUser.value
+            // CORRECCIÓN: Obtiene el usuario desde el uiState del UsuarioViewModel
+            val user = usuarioViewModel.uiState.value.currentUser
             val productos = carritoViewModel.productos.value
-            if (user == null || productos.isEmpty()) {
+            if (user == null || user.mongoId == null || productos.isEmpty()) {
+                // No se puede proceder sin un usuario con ID de mongo o sin productos
                 return@launch
             }
 
             val numeroPedido = GeneradorNumeroPedido.generar(user.nombre)
             val pedido = PedidoCompleto(
                 numeroPedido = numeroPedido,
-                nombreUsuario = user.nombre,
+                nombreUsuario = user.nombre, // CORRECCIÓN
                 productos = productos,
                 subtotal = carritoViewModel.subtotal.value.toDouble(),
                 impuestos = carritoViewModel.iva.value.toDouble(),
@@ -58,25 +57,24 @@ class PedidosViewModel(
                 fechaConfirmacion = System.currentTimeMillis()
             )
 
-            val resultado = pedidoRepository.guardarPedido(pedido, user.id.toString())
+            // Usamos el mongoId del usuario para guardar el pedido
+            val resultado = pedidoRepository.guardarPedido(pedido, user.mongoId)
             resultado.onSuccess { numPedido ->
                 carritoViewModel.limpiarCarrito()
-
-                // CORRECCIÓN DEFINITIVA: Ambos parámetros de ruta son ahora Strings.
                 mainViewModel.navigate(
                     route = Screen.Success.createRoute(numPedido),
                     popUpToRoute = Screen.Cart.route,
                     inclusive = true
                 )
-
-                val pedidosActuales = _pedidos.value.toMutableList()
-                pedidosActuales.add(0, pedido)
-                _pedidos.value = pedidosActuales
-                _ultimoPedidoGuardado.value = numPedido
-            }.onFailure { error ->
-                android.util.Log.e("PedidosViewModel", "Error al guardar pedido: ${error.message}")
             }
         }
     }
-    // ... (resto de funciones)
+
+    fun cargarPedidosUsuario(userId: String) {
+        viewModelScope.launch {
+            pedidoRepository.obtenerPedidosUsuario(userId).collect { pedidos ->
+                _pedidos.value = pedidos
+            }
+        }
+    }
 }
