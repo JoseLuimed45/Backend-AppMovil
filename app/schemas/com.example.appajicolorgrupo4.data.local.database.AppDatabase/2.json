@@ -2,17 +2,23 @@
   "formatVersion": 1,
   "database": {
     "version": 2,
-    "identityHash": "30b7902b6d2dd854dd68233b614ded67",
+    "identityHash": "6de23046a9e03e8e34620df0c0da3efd",
     "entities": [
       {
         "tableName": "users",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `nombre` TEXT NOT NULL, `correo` TEXT NOT NULL, `telefono` TEXT NOT NULL, `direccion` TEXT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `mongoId` TEXT, `nombre` TEXT NOT NULL, `correo` TEXT NOT NULL, `telefono` TEXT NOT NULL, `direccion` TEXT NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
             "columnName": "id",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "mongoId",
+            "columnName": "mongoId",
+            "affinity": "TEXT",
+            "notNull": false
           },
           {
             "fieldPath": "nombre",
@@ -245,7 +251,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '30b7902b6d2dd854dd68233b614ded67')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '6de23046a9e03e8e34620df0c0da3efd')"
     ]
   }
 }

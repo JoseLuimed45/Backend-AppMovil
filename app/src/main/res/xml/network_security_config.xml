@@ -10,7 +10,7 @@
 
     <!-- Domain-specific configuration for API -->
     <domain-config cleartextTrafficPermitted="false">
-        <domain includeSubdomains="true">api.myecommerce.com</domain>
+        <domain includeSubdomains="true">backend-app-movil.vercel.app</domain>
         <trust-anchors>
             <certificates src="system" />
         </trust-anchors>

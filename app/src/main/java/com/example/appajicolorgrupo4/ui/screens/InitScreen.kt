@@ -11,14 +11,15 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import com.example.appajicolorgrupo4.R
+import com.example.appajicolorgrupo4.navigation.Screen
 import com.example.appajicolorgrupo4.ui.components.AppBackground
 import com.example.appajicolorgrupo4.ui.theme.AmarilloAji
+import com.example.appajicolorgrupo4.viewmodel.MainViewModel
 
 @Composable
 fun InitScreen(
-    navController: NavController
+    mainViewModel: MainViewModel
 ) {
     AppBackground {
         Column(
@@ -47,9 +48,7 @@ fun InitScreen(
                 modifier = Modifier
                     .fillMaxWidth(0.85f)
                     .height(100.dp)
-                    .clickable {
-                        navController.navigate("login")
-                    }
+                    .clickable { mainViewModel.navigate(Screen.Login) }
             )
 
             Spacer(modifier = Modifier.height(32.dp))
@@ -62,9 +61,7 @@ fun InitScreen(
                 modifier = Modifier
                     .fillMaxWidth(0.85f)
                     .height(100.dp)
-                    .clickable {
-                        navController.navigate("registro")
-                    }
+                    .clickable { mainViewModel.navigate(Screen.Registro) }
             )
         }
     }

@@ -7,12 +7,12 @@ plugins {
 
 android {
     namespace = "com.example.appajicolorgrupo4"
-    compileSdk = 36
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.example.appajicolorgrupo4"
         minSdk = 24
-        targetSdk = 36
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
@@ -68,28 +68,28 @@ android {
 }
 
 dependencies {
-    // Jetpack Compose y Material 3
-    implementation("androidx.activity:activity-compose:1.9.0")
-    implementation("androidx.compose.material3:material3:1.3.1")
-    // Lifecycle + ViewModel
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
-    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.8.7")
+    // Jetpack Compose y Material 3 (versiones compatibles SDK 34)
+    implementation("androidx.activity:activity-compose:1.9.2")
+    implementation("androidx.compose.material3:material3:1.3.0")
+    
+    // Lifecycle + ViewModel (versiones compatibles SDK 34)
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.6")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.8.6")
 
     // Retrofit y Gson Converter
     implementation("com.squareup.retrofit2:retrofit:2.11.0")
     implementation("com.squareup.retrofit2:converter-gson:2.11.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
 
-    // Corrutinas para trabajo asincronico
-    // Corrutinas para trabajo asincronico
+    // Corrutinas
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0")
 
-    // Core AndroidX
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.lifecycle.runtime.ktx)
+    // Core AndroidX (versiones compatibles con SDK 34)
+    implementation("androidx.core:core-ktx:1.13.1")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.6")
 
-    // Jetpack Compose
-    implementation(platform(libs.androidx.compose.bom))
+    // Jetpack Compose (BOM compatible con SDK 34)
+    implementation(platform("androidx.compose:compose-bom:2024.06.00"))
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.foundation)
     implementation(libs.androidx.compose.ui.graphics)
@@ -102,12 +102,12 @@ dependencies {
     // Activity Compose
     implementation(libs.androidx.activity.compose)
 
-    // Navigation Compose (estable)
+    // Navigation Compose
     implementation("androidx.navigation:navigation-compose:2.8.5")
 
-    // Lifecycle + ViewModel en Compose (alineadas)
-
-
+    // Activity Compose con LocalActivity
+    implementation("androidx.activity:activity-compose:1.9.3")
+    
     // Responsive
     implementation("androidx.compose.material3:material3-window-size-class:1.3.1")
     implementation("androidx.compose.material3.adaptive:adaptive:1.0.0")

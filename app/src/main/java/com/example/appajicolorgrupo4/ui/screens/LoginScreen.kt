@@ -12,59 +12,28 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import com.example.appajicolorgrupo4.ui.components.AppBackground
 import com.example.appajicolorgrupo4.navigation.Screen
 import com.example.appajicolorgrupo4.ui.theme.AmarilloAji
 import com.example.appajicolorgrupo4.ui.theme.MoradoAji
 import com.example.appajicolorgrupo4.viewmodel.AuthViewModel
-import com.example.appajicolorgrupo4.viewmodel.AuthViewModelFactory
-import com.example.appajicolorgrupo4.data.local.database.AppDatabase
-import com.example.appajicolorgrupo4.data.repository.UserRepository
-import com.example.appajicolorgrupo4.data.session.SessionManager
-import com.example.appajicolorgrupo4.viewmodel.UsuarioViewModel
+import com.example.appajicolorgrupo4.viewmodel.MainViewModel
 
 @Composable
 fun LoginScreen(
-    navController: NavController,
-    usuarioViewModel: UsuarioViewModel
+    authViewModel: AuthViewModel, // Recibe el ViewModel de autenticación
+    mainViewModel: MainViewModel  // Recibe el ViewModel de navegación
 ) {
-    val context = LocalContext.current
-    val database = AppDatabase.getInstance(context)
-    val repository = UserRepository(database.userDao())
-    val sessionManager = SessionManager(context)
-    val viewModel: AuthViewModel = viewModel(factory = AuthViewModelFactory(repository, sessionManager))
-
-    val estado by viewModel.login.collectAsState()
+    val estado by authViewModel.login.collectAsState()
     var showPassword by remember { mutableStateOf(false) }
 
-    // Navegar a Home cuando login exitoso
-    LaunchedEffect(estado.success) {
-        if (estado.success) {
-            // Limpiar estado antes de navegar para evitar bucles
-            viewModel.clearLoginResult()
-            
-            if (estado.isAdmin) {
-                navController.navigate(Screen.AdminProductos.route) {
-                    // Mantener Login en el backstack pero ir a AdminProductos
-                    popUpTo(Screen.Login.route) { inclusive = false }
-                }
-            } else {
-                usuarioViewModel.cargarPerfil()
-                navController.navigate(Screen.Home.route) {
-                    // Clear the entire backstack so user cannot go back to login
-                    popUpTo(0) { inclusive = true }
-                }
-            }
-        }
-    }
+    // La navegación ahora se maneja completamente dentro de AuthViewModel.
+    // Ya no se necesita el LaunchedEffect aquí.
 
     AppBackground {
         Column(
@@ -87,13 +56,11 @@ fun LoginScreen(
             // Campo Email
             OutlinedTextField(
                 value = estado.correo,
-                onValueChange = viewModel::onLoginEmailChange,
+                onValueChange = authViewModel::onLoginEmailChange,
                 label = { Text("Email", color = MoradoAji, fontWeight = FontWeight.Bold) },
                 placeholder = { Text("Ingrese su email", color = MoradoAji.copy(alpha = 0.7f)) },
                 singleLine = true,
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Email
-                ),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                 modifier = Modifier.fillMaxWidth(),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = AmarilloAji,
@@ -119,7 +86,7 @@ fun LoginScreen(
             // Campo Password
             OutlinedTextField(
                 value = estado.clave,
-                onValueChange = viewModel::onLoginPassChange,
+                onValueChange = authViewModel::onLoginPassChange,
                 label = { Text("Contraseña", color = MoradoAji, fontWeight = FontWeight.Bold) },
                 placeholder = { Text("Ingrese su contraseña", color = MoradoAji.copy(alpha = 0.7f)) },
                 singleLine = true,
@@ -164,7 +131,7 @@ fun LoginScreen(
 
             // Botón Entrar
             Button(
-                onClick = viewModel::submitLogin,
+                onClick = authViewModel::submitLogin,
                 modifier = Modifier.fillMaxWidth(),
                 enabled = estado.canSubmit && !estado.isSubmitting,
                 colors = ButtonDefaults.buttonColors(
@@ -192,9 +159,7 @@ fun LoginScreen(
 
             // Botón Ir a Registro
             OutlinedButton(
-                onClick = {
-                    navController.navigate("registro")
-                },
+                onClick = { mainViewModel.navigate(Screen.Registro) },
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.outlinedButtonColors(
                     containerColor = AmarilloAji,
@@ -209,9 +174,7 @@ fun LoginScreen(
 
             // Botón Recuperar Contraseña
             TextButton(
-                onClick = {
-                    navController.navigate("password_recovery")
-                },
+                onClick = { mainViewModel.navigate(Screen.PasswordRecovery) },
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.textButtonColors(
                     contentColor = AmarilloAji

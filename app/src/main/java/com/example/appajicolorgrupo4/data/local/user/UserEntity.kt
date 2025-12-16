@@ -10,6 +10,7 @@ data class UserEntity(
     @PrimaryKey(autoGenerate = true)    // Clave primaria autoincremental
     val id: Long = 0L,
 
+    val mongoId: String? = null,        // ObjectId de MongoDB (del backend)
     val nombre: String,                 // Nombre completo del usuario
     val correo: String,                 // Correo (idealmente único a nivel de negocio)
     val telefono: String = "",          // Teléfono del usuario

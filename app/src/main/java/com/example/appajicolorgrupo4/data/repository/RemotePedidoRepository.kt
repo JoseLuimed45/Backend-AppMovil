@@ -23,7 +23,7 @@ class RemotePedidoRepository(private val apiService: ApiService) {
                             OrderProduct(
                                     producto = producto.id, // Asumiendo que ID es String
                                     cantidad = producto.cantidad,
-                                    precioUnitario = producto.precio,
+                                    precioUnitario = producto.precio.toDouble(), // Convertir Int a Double
                                     talla = producto.talla?.valor,
                                     color = producto.color.hexCode
                             )
@@ -34,10 +34,10 @@ class RemotePedidoRepository(private val apiService: ApiService) {
                                 numeroPedido = pedido.numeroPedido,
                                 usuario = userId,
                                 productos = orderProducts,
-                                subtotal = pedido.subtotal.toInt(),
-                                impuestos = pedido.impuestos.toInt(),
-                                costoEnvio = pedido.costoEnvio.toInt(),
-                                total = pedido.total.toInt(),
+                                subtotal = pedido.subtotal, // Double para backend (Decimal128)
+                                impuestos = pedido.impuestos, // Double para backend (Decimal128)
+                                costoEnvio = pedido.costoEnvio, // Double para backend (Decimal128)
+                                total = pedido.total, // Double para backend (Decimal128)
                                 direccionEnvio = pedido.direccionEnvio,
                                 telefono = pedido.telefono,
                                 metodoPago = pedido.metodoPago.name,
@@ -89,7 +89,7 @@ class RemotePedidoRepository(private val apiService: ApiService) {
                     ProductoCarrito(
                             id = item.producto,
                             nombre = "Producto ${item.producto}", // Placeholder si no hay populate
-                            precio = item.precioUnitario,
+                            precio = item.precioUnitario.toInt(), // Convertir Double a Int
                             cantidad = item.cantidad,
                             color = ColorInfo("Color", Color.Gray, item.color ?: "#000000"),
                             categoria = CategoriaProducto.SERIGRAFIA, // Default

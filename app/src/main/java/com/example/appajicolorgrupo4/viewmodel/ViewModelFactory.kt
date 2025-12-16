@@ -1,49 +1,31 @@
 package com.example.appajicolorgrupo4.viewmodel
 
-import android.app.Application
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.appajicolorgrupo4.data.remote.RetrofitInstance
+import com.example.appajicolorgrupo4.data.repository.RemotePedidoRepository
 
 /**
- * Factory helper para crear ViewModels que requieren Application
+ * Factory dedicada para crear PedidosViewModel con todas sus dependencias inyectadas.
+ * Este patrón hace que las dependencias sean explícitas y el ViewModel más testeable.
  */
-class AppViewModelFactory(private val application: Application) : ViewModelProvider.Factory {
+class PedidosViewModelFactory(
+    private val mainViewModel: MainViewModel,
+    private val carritoViewModel: CarritoViewModel,
+    private val usuarioViewModel: UsuarioViewModel
+) : ViewModelProvider.Factory {
+
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return when {
-            modelClass.isAssignableFrom(UsuarioViewModel::class.java) -> {
-                UsuarioViewModel(application) as T
-            }
-            modelClass.isAssignableFrom(PedidosViewModel::class.java) -> {
-                PedidosViewModel(application) as T
-            }
-            else -> throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
+        if (modelClass.isAssignableFrom(PedidosViewModel::class.java)) {
+            // Inyectar todas las dependencias requeridas en el constructor
+            return PedidosViewModel(
+                pedidoRepository = RemotePedidoRepository(RetrofitInstance.api),
+                mainViewModel = mainViewModel,
+                carritoViewModel = carritoViewModel,
+                usuarioViewModel = usuarioViewModel
+            ) as T
         }
+        throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
     }
 }
-
-/**
- * Helper Composable para obtener UsuarioViewModel con el factory correcto
- */
-@Composable
-fun usuarioViewModel(): UsuarioViewModel {
-    val context = LocalContext.current
-    return viewModel(
-        factory = AppViewModelFactory(context.applicationContext as Application)
-    )
-}
-
-/**
- * Helper Composable para obtener PedidosViewModel con el factory correcto
- */
-@Composable
-fun pedidosViewModel(): PedidosViewModel {
-    val context = LocalContext.current
-    return viewModel(
-        factory = AppViewModelFactory(context.applicationContext as Application)
-    )
-}
-

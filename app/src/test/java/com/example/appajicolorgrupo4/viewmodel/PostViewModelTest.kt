@@ -6,6 +6,7 @@ import com.example.appajicolorgrupo4.rules.MainDispatcherRule
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.*
 import org.junit.Rule
@@ -23,16 +24,49 @@ class PostViewModelTest {
     @Test
     fun `fetchPosts updates state with posts when success`() = runTest {
         // Given
+        val posts = listOf(
+            Post(1, 1, "Title 1", "Body 1"),
+            Post(2, 1, "Title 2", "Body 2")
+        )
+        coEvery { postRepository.getAllPosts() } returns posts
+
+        // When
+        viewModel = PostViewModel(postRepository)
+        advanceUntilIdle()
+
+        // Then
+        assertEquals(posts, viewModel.posts.value)
+        assertFalse(viewModel.isLoading.value)
+    }
+
+    @Test
+    fun `fetchPosts updates isLoading state`() = runTest {
+        // Given
         val posts = listOf(Post(1, 1, "Title", "Body"))
         coEvery { postRepository.getAllPosts() } returns posts
 
         // When
         viewModel = PostViewModel(postRepository)
+        advanceUntilIdle()
 
         // Then
-        // Wait for coroutines to finish (since fetchAllPosts is called in init)
-        // We can access the value directly from StateFlow
-        assertEquals(posts, viewModel.posts.value)
+        assertFalse(viewModel.isLoading.value)
+        assertEquals(1, viewModel.posts.value.size)
+    }
+
+    @Test
+    fun `fetchPosts handles empty list`() = runTest {
+        // Given
+        coEvery { postRepository.getAllPosts() } returns emptyList()
+
+        // When
+        viewModel = PostViewModel(postRepository)
+        advanceUntilIdle()
+
+        // Then
+        assertEquals(emptyList<Post>(), viewModel.posts.value)
         assertFalse(viewModel.isLoading.value)
     }
 }
+
+
